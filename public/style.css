@@ -9,8 +9,13 @@
 
 .bottom {
     position: absolute;
-    bottom: -25px;
-    left: 350px;
+    bottom: 0;
+    left: 25%;
+}
+
+.otherPlayerCard {
+    width: 100px;
+    height: 180px;
 }
 
 .imgDeck {
@@ -54,7 +59,7 @@
 }
 
 .deck {
-    position: absolute;
+    position: relative;
     left: 450px;
     top: 200px;
     float: left;

@@ -66,7 +66,7 @@ io.sockets.on('connection', (socket) => {
                 actualPlayer = 0;
 
                 for (let i = 0; i < 4; i++) {
-                    io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8));
+                    io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
                 }
 
                 io.to(players[actualPlayer]).emit('yourTurn');

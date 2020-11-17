@@ -2,11 +2,21 @@ const socket = io.connect('http://localhost:3000');                    // connec
 
 // CLASSES
 class Player {
+
     constructor() {
         this._id = null;
         this._cards = [];
         this._points = 0;
         this._onTurn = false;
+        this._playingIndex = -1;
+    }
+
+    get playingIndex() {
+        return this._playingIndex;
+    }
+
+    set playingIndex(value) {
+        this._playingIndex = value;
     }
 
     get onTurn() {
@@ -183,6 +193,7 @@ function showCardsOfOtherPlayers() {
         img.id = "cards/back" + i;
         img.width = 100;
         img.height = 180;
+        img.classList.add("otherPlayerCard");
         document.getElementById(Math.floor( i / 8) + 1).appendChild(img);
     }
 }
@@ -227,8 +238,18 @@ function playableCards() {
     }
 }
 
-socket.on('startingGame', (cards) => {
+function removeCardFromOtherPlayer(otherIndex) {
+    console.log("otherIndex : " + otherIndex + "playerIndex : " + player.playingIndex);
+    const nodeCard = document.getElementById((4 + (otherIndex - player.playingIndex)) % 4);
+    if (nodeCard.firstChild) {
+        nodeCard.removeChild(nodeCard.lastChild);
+    }
+}
+
+socket.on('startingGame', (cards, index) => {
     player.id = socket.id;
+    player.playingIndex = index;
+    console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
         let card = new Card(cards[i].suit, cards[i].value);
         let img = new Image();
@@ -275,6 +296,7 @@ socket.on('newCardPlayed', (cardInfo) => {
     card.image = img;
     document.getElementById("deck").appendChild(img);
     deck.addCard(card, cardInfo.player_id);
+    removeCardFromOtherPlayer(cardInfo.player_index);
 });
 
 socket.on('takeDeck', () => {
@@ -328,7 +350,8 @@ function drop(event) {
                         cardId: card_id,
                         cardSuit: player.cards[card].suit,
                         cardValue: player.cards[card].value,
-                        player_id: player.id
+                        player_id: player.id,
+                        player_index: player.playingIndex
                     };
                     player.cards.splice(card, 1);
                     socket.emit('moveDone', data);
