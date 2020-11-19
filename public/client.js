@@ -177,6 +177,7 @@ function cmpSuits(first, second) {
     return first.suit.localeCompare(second.suit);
 }
 
+console.log(name);
 const player = new Player();
 const deck = new Deck();
 socket.on('connect', () => {
@@ -184,6 +185,7 @@ socket.on('connect', () => {
 });
 
 const msg = document.getElementById('msg');
+const table = document.getElementById('resultTable');
 
 
 function showCardsOfOtherPlayers() {
@@ -315,8 +317,24 @@ socket.on('takeDeck', () => {
     });
 });
 
-socket.on('gameOver', () => {
-    console.log("Hra skoncila");
+socket.on('gameOver', (player_points) => {
+    let tbody = document.getElementById('resultTableBody');
+    table.style.display = "block";
+
+    for (let key in player_points) {
+        let row = document.createElement("tr");
+        let playerTD = document.createElement("td");
+        let pointTD = document.createElement("td");
+        playerTD.appendChild(document.createTextNode(key));
+        pointTD.appendChild(document.createTextNode(player_points[key]));
+
+        row.appendChild(playerTD);
+        row.appendChild(pointTD);
+
+        tbody.appendChild(row);
+        console.log("Player : " + key + " points : " + player_points[key])
+    }
+    table.appendChild(tbody);
 });
 
 socket.on('notEnoughPlayers', () => {
