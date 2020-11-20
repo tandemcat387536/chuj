@@ -107,15 +107,7 @@ io.sockets.on('connection', (socket) => {
 
     socket.on('sendingPoints', function (data) {
         console.log(data.playerID + " is sending points");
-        player_points[data.playerID] = data.playerPoints;
-        player_overall_points[data.playerID] = (player_overall_points[data.playerID] + data.playerPoints) || data.playerPoints;
-        if (Object.keys(player_points).length === 4) {
-            points_database.insert(player_points);
-            //for (let key in player_points) {
-            //    console.log("Player : " + key + " points : " + player_points[key])
-            //}
-            io.emit('gameOver', player_points, player_overall_points);
-        }
+        storePoints(data);
     });
 
     socket.on('playerReady', () => {
@@ -133,6 +125,21 @@ io.sockets.on('connection', (socket) => {
             }
         }
     });
+
+    function storePoints(data) {
+        player_points[data.playerID] = data.playerPoints;
+        player_overall_points[data.playerID] = (player_overall_points[data.playerID] + data.playerPoints) || data.playerPoints;
+        if (Object.keys(player_points).length === 4) {
+            points_database.insert(player_points);
+            for (let key in player_points) {
+                console.log("Player : " + key + " points : " + player_points[key])
+            }
+            io.emit('gameOver', player_points, player_overall_points);
+        }
+        for (let key in player_points) {
+            delete player_points.key;
+        }
+    }
 
     function updateOrderOfPlayers(players, beginningPlayerID) {
         let first = players[0];
@@ -154,8 +161,6 @@ io.sockets.on('connection', (socket) => {
         }
         cards = generateCards();
         shuffle(cards);
-        player_points = {};
-        player_overall_points = {};
         for (let i = 0; i < 4; i++) {
             io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
         }
