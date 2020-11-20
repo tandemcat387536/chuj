@@ -52,6 +52,7 @@ let gameStarted = false;
 const players = [];
 let cards = generateCards();
 let player_points = {};
+let player_overall_points = {};
 shuffle(cards);
 let readyPlayers = 0;
 
@@ -107,12 +108,13 @@ io.sockets.on('connection', (socket) => {
     socket.on('sendingPoints', function (data) {
         console.log(data.playerID + " is sending points");
         player_points[data.playerID] = data.playerPoints;
+        player_overall_points[data.playerID] = (player_overall_points[data.playerID] + data.playerPoints) || data.playerPoints;
         if (Object.keys(player_points).length === 4) {
             points_database.insert(player_points);
             //for (let key in player_points) {
             //    console.log("Player : " + key + " points : " + player_points[key])
             //}
-            io.emit('gameOver', player_points);
+            io.emit('gameOver', player_points, player_overall_points);
         }
     });
 
@@ -143,6 +145,7 @@ io.sockets.on('connection', (socket) => {
 
     function newGame() {
         readyPlayers = 0;
+        actualPlayer = 0;
         (beginningPlayer < 3) ? beginningPlayer++ : beginningPlayer = 0;
         let i = 0;
         while (i < beginningPlayer) {
@@ -152,6 +155,7 @@ io.sockets.on('connection', (socket) => {
         cards = generateCards();
         shuffle(cards);
         player_points = {};
+        player_overall_points = {};
         for (let i = 0; i < 4; i++) {
             io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
         }

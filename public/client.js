@@ -9,6 +9,22 @@ class Player {
         this._points = 0;
         this._onTurn = false;
         this._playingIndex = -1;
+        //this._overallPoints = 0;
+    }
+/*
+    get overallPoints() {
+        return this._overallPoints;
+    }
+
+    addOverallPoints(points) {
+        this._overallPoints += points;
+    }
+*/
+    nullParams () {
+        this._cards = [];
+        this._points = 0;
+        this._onTurn = false;
+        this._playingIndex = -1;
     }
 
     get playingIndex() {
@@ -305,15 +321,10 @@ socket.on('takeDeck', () => {
     takeButton.addEventListener("click", takingDeck);
 });
 
-socket.on('gameOver', (player_points) => {
+socket.on('gameOver', (player_points, player_overall_points) => {
     console.log("Client game over, showing table with results");
-    showTableResults(player_points);
-    readyButton.addEventListener("click", function () {
-        socket.emit('playerReady');
-        player = new Player();
-        deck = new Deck();
-        toggleElements("none", "none", "none", "none", "none", "none");
-    });
+    showTableResults(player_points, player_overall_points);
+    readyButton.addEventListener("click", playerReady);
 });
 
 socket.on('notEnoughPlayers', () => {
@@ -323,6 +334,13 @@ socket.on('notEnoughPlayers', () => {
     }
     toggleElements("block", "none", "none", "none", "none", "block");
 });
+
+function playerReady() {
+    socket.emit('playerReady');
+    player.nullParams();
+    deck.nullParams();
+    toggleElements("none", "none", "none", "none", "none", "none");
+}
 
 function takingDeck() {
     console.log("Taking deck");
@@ -339,15 +357,19 @@ function takingDeck() {
     }
 }
 
-function showTableResults(player_points) {
+function showTableResults(player_points, player_overall_points) {
     toggleElements("none", "block", "block", "block", "none", "none");
     let row = 1;
     for (let key in player_points) {
         resultTable.rows[row].cells[0].innerHTML = key;
         resultTable.rows[row].cells[1].innerHTML = player_points[key];
+        row++;
+    }
 
+    row = 1;
+    for (let key in player_overall_points) {
         overallTable.rows[row].cells[0].innerHTML = key;
-        overallTable.rows[row].cells[1].innerHTML = player_points[key];
+        overallTable.rows[row].cells[1].innerHTML = player_overall_points[key];
         row++;
     }
 }
