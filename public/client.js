@@ -239,9 +239,11 @@ function playableCards() {
         if (deck.cards.length !== 0) {
             if (card.suit === deck.cards[0].suit) {
                 card.playable = true;
+                card.image.classList.replace('imgDeck', 'imgHand');
                 hasSuit = true;
             } else {
                 card.playable = false;
+                card.image.classList.replace('imgHand', 'imgDeck');
             }
         }
         //console.log("Card : " + card.id + " playable : " + card.playable);
@@ -250,6 +252,7 @@ function playableCards() {
     if (!hasSuit) {
         for (let card of player.cards) {
             card.playable = true;
+            card.image.classList.replace('imgDeck', 'imgHand');
             //console.log("Card : " + card.id + " playable : " + card.playable);
         }
     }
