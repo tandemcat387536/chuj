@@ -47,8 +47,7 @@ function shuffle(array) {
 }
 
 let actualPlayer;
-let beginningPlayer = 0;
-let gameStarted = false;
+let nextBeginningPlayerID = null;
 const players = [];
 let cards = generateCards();
 let player_points = {};
@@ -65,15 +64,15 @@ io.sockets.on('connection', (socket) => {
             players.push(socket.id);
             if (players.length === 4) {
                 console.log("4 players connected");
-                gameStarted = true;
                 actualPlayer = 0;
 
                 for (let i = 0; i < 4; i++) {
                     io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
                 }
 
-                io.to(players[actualPlayer]).emit('yourTurn');
-                console.log("Player is on turn : " + players[actualPlayer]);
+                nextBeginningPlayerID = players[1];
+                io.to(players[0]).emit('yourTurn');
+                console.log("Player is on turn : " + players[0]);
             }
         } else {
             console.log("Full capacity, gtfo");
@@ -153,12 +152,10 @@ io.sockets.on('connection', (socket) => {
     function newGame() {
         readyPlayers = 0;
         actualPlayer = 0;
-        (beginningPlayer < 3) ? beginningPlayer++ : beginningPlayer = 0;
-        let i = 0;
-        while (i < beginningPlayer) {
+        while (players[0] !== nextBeginningPlayerID) {
             players.push(players.shift());
-            i++;
         }
+        nextBeginningPlayerID = players[1];
         cards = generateCards();
         shuffle(cards);
         for (let i = 0; i < 4; i++) {
