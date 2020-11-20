@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Ej volako mi ostalo na ko.ot</title>
-
 </head>
 <body>
+
     <link href="style.css" rel="stylesheet"/>
 
     <!-- <button type="button" class="center" id="start"> Zacni hru </button> -->
@@ -13,6 +13,42 @@
     <button type="button" class="takeDeck" id="takeDeck"> Zober karty </button>
 
     <h2 id="msg"> Waiting for players to connect</h2>
+
+    <button type="button" class="ready" id="ready"> Ready </button>
+
+    <table id="resultTable" class="resultTable">
+        <tbody id="resultTableBody">
+            <tr>
+                <th>Player</th>
+                <th>Points</th>
+            </tr>
+            <tr>
+                <td id="firstPlayer"></td>
+                <td id="firstPlayerPoints"></td>
+            </tr>
+            <tr>
+                <td id="secondPlayer"></td>
+                <td id="secondPlayerPoints"></td>
+            </tr>
+            <tr>
+                <td id="thirdPlayer"></td>
+                <td id="thirdPlayerPoints"></td>
+            </tr>
+            <tr>
+                <td id="fourthPlayer"></td>
+                <td id="fourthPlayerPoints"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="overallTable" class="resultTable">
+        <tbody id="overallTableBody">
+        <tr>
+            <th>Player</th>
+            <th>Points</th>
+        </tr>
+        </tbody>
+    </table>
 
     <h2 class="yourTurn" id="yourTurn"> Your turn! </h2>
 
@@ -27,7 +63,6 @@
     <div class="deck" id="deck" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 
     <script src="/socket.io/socket.io.js"></script>
-
     <script src="client.js"></script>
 
 </body>
