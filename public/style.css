@@ -75,11 +75,16 @@
     /*border: 1px solid black;*/
 }
 
-.resultTable {
+table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    margin-left: auto;
     display: none;
+}
+
+table.overallTable {
+    margin-right: auto;
 }
 
 td, th {
