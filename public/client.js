@@ -177,16 +177,16 @@ function cmpSuits(first, second) {
     return first.suit.localeCompare(second.suit);
 }
 
-console.log(name);
-const player = new Player();
-const deck = new Deck();
+let player = new Player();
+let deck = new Deck();
 socket.on('connect', () => {
     socket.emit('playerCreated');
 });
 
 const msg = document.getElementById('msg');
 const table = document.getElementById('resultTable');
-
+const takeButton = document.getElementById('takeDeck');
+const readyButton = document.getElementById('ready');
 
 function showCardsOfOtherPlayers() {
     for (let i = 0; i < 24; i++) {
@@ -263,7 +263,7 @@ socket.on('startingGame', (cards, index) => {
         player.addCard(card);
         img = new Image();
     }
-    msg.remove();
+    msg.style.display = "none";
     showCardsOfOtherPlayers();
     player.showCards();
 });
@@ -303,7 +303,6 @@ socket.on('newCardPlayed', (cardInfo) => {
 
 socket.on('takeDeck', () => {
     player.takeCards(deck.points);
-    let takeButton = document.getElementById('takeDeck');
     takeButton.style.display = "block";
     takeButton.addEventListener("click", function () {
         flushDeck();
@@ -318,32 +317,32 @@ socket.on('takeDeck', () => {
 });
 
 socket.on('gameOver', (player_points) => {
-    let tbody = document.getElementById('resultTableBody');
+    msg.style.display = "none";
     table.style.display = "block";
-
+    let row = 1;
     for (let key in player_points) {
-        let row = document.createElement("tr");
-        let playerTD = document.createElement("td");
-        let pointTD = document.createElement("td");
-        playerTD.appendChild(document.createTextNode(key));
-        pointTD.appendChild(document.createTextNode(player_points[key]));
-
-        row.appendChild(playerTD);
-        row.appendChild(pointTD);
-
-        tbody.appendChild(row);
-        console.log("Player : " + key + " points : " + player_points[key])
+        table.rows[row].cells[0].innerHTML = key;
+        table.rows[row].cells[1].innerHTML = player_points[key];
+        row++;
     }
-    table.appendChild(tbody);
+    readyButton.style.display = "block";
+    readyButton.addEventListener("click", function () {
+       socket.emit('playerReady');
+        player = new Player();
+        deck = new Deck();
+        readyButton.style.display = "none";
+        table.style.display = "none";
+    });
 });
 
 socket.on('notEnoughPlayers', () => {
-    player.cards([]);
+    player.cards = [];
     for (let i = 0; i < 32; i++) {
-        document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).childNodes[0]);
+        document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).lastChild);
     }
-    msg.enable();
+    msg.style.display = "block";
 });
+
 
 function allowDrop(event) {
     event.preventDefault();
