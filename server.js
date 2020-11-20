@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const server = app.listen(3000);
 const io = require('socket.io')(server);
+const Datastore = require('nedb');
 app.use(express.static('public'));
 /*
 app.get('/', (req, res) => {
@@ -12,8 +13,11 @@ app.get('/', (req, res) => {
 */
 console.log("My socket server is running");
 
-let actualPlayer;
-let gameStarted = false;
+const users = new Datastore('users.db');
+users.loadDatabase();
+const points_database = new Datastore('points_database.db');
+points_database.loadDatabase();
+
 
 function generateCards() {
     let suits = ["hearts", "diamonds", "spades", "clubs"];
@@ -31,12 +35,6 @@ function generateCards() {
     return cards;
 }
 
-function results(players) {
-    for (let player of players) {
-        console.log(player.points);
-    }
-}
-
 
 // Randomize array in-place using Durstenfeld shuffle algorithm
 function shuffle(array) {
@@ -48,10 +46,14 @@ function shuffle(array) {
     }
 }
 
+let actualPlayer;
+let beginningPlayer = 0;
+let gameStarted = false;
 const players = [];
-const cards = generateCards();
-const player_points = {};
+let cards = generateCards();
+let player_points = {};
 shuffle(cards);
+let readyPlayers = 0;
 
 io.sockets.on('connection', (socket) => {
 
@@ -105,9 +107,18 @@ io.sockets.on('connection', (socket) => {
     socket.on('sendingPoints', function (data) {
         player_points[data.playerID] = data.playerPoints;
         if (Object.keys(player_points).length === 4) {
-            for (let key in player_points) {
-                console.log("Player : " + key + " points : " + player_points[key])
-            }
+            points_database.insert(player_points);
+            //for (let key in player_points) {
+            //    console.log("Player : " + key + " points : " + player_points[key])
+            //}
+            io.emit("gameOver", player_points);
+        }
+    });
+
+    socket.on('playerReady', () => {
+        readyPlayers++;
+        if (readyPlayers === 4) {
+            newGame();
         }
     });
 
@@ -128,6 +139,24 @@ io.sockets.on('connection', (socket) => {
             first = players[0];
         }
         actualPlayer = 0;
+    }
+
+    function newGame() {
+        readyPlayers = 0;
+        (beginningPlayer < 3) ? beginningPlayer++ : beginningPlayer = 0;
+        let i = 0;
+        while (i < beginningPlayer) {
+            players.push(players.shift());
+            i++;
+        }
+        cards = generateCards();
+        shuffle(cards);
+        player_points = {};
+        for (let i = 0; i < 4; i++) {
+            io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
+        }
+        io.to(players[actualPlayer]).emit('yourTurn');
+        console.log("Player is on turn : " + players[actualPlayer]);
     }
 });
 
