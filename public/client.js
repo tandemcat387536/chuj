@@ -184,9 +184,11 @@ socket.on('connect', () => {
 });
 
 const msg = document.getElementById('msg');
-const table = document.getElementById('resultTable');
+const resultTable = document.getElementById('resultTable');
+const overallTable = document.getElementById('overallTable');
 const takeButton = document.getElementById('takeDeck');
 const readyButton = document.getElementById('ready');
+const yourTurn = document.getElementById('yourTurn');
 
 function showCardsOfOtherPlayers() {
     for (let i = 0; i < 24; i++) {
@@ -202,11 +204,8 @@ function showCardsOfOtherPlayers() {
 
 function checkDeck() {
     if (deck.cards.length === 4) {
-        console.log("Highest card :" + deck.highestCard.id + " beginningPlayerID :" + deck.beginningPlayer_id);
+        //console.log("Highest card :" + deck.highestCard.id + " beginningPlayerID :" + deck.beginningPlayer_id);
         socket.emit('fullDeck', deck.beginningPlayer_id);
-        if (player.cards.length === 0) {
-            socket.emit('gameOver');
-        }
     }
 }
 
@@ -229,19 +228,19 @@ function playableCards() {
                 card.playable = false;
             }
         }
-        console.log("Card : " + card.id + " playable : " + card.playable);
+        //console.log("Card : " + card.id + " playable : " + card.playable);
     }
 
     if (!hasSuit) {
         for (let card of player.cards) {
             card.playable = true;
-            console.log("Card : " + card.id + " playable : " + card.playable);
+            //console.log("Card : " + card.id + " playable : " + card.playable);
         }
     }
 }
 
 function removeCardFromOtherPlayer(otherIndex) {
-    console.log("otherIndex : " + otherIndex + "playerIndex : " + player.playingIndex);
+    //console.log("otherIndex : " + otherIndex + "playerIndex : " + player.playingIndex);
     const nodeCard = document.getElementById((4 + (otherIndex - player.playingIndex)) % 4);
     if (nodeCard.firstChild) {
         nodeCard.removeChild(nodeCard.lastChild);
@@ -251,7 +250,7 @@ function removeCardFromOtherPlayer(otherIndex) {
 socket.on('startingGame', (cards, index) => {
     player.id = socket.id;
     player.playingIndex = index;
-    console.log("Playing index of" + player.id +" is " + player.playingIndex);
+    //console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
         let card = new Card(cards[i].suit, cards[i].value);
         let img = new Image();
@@ -263,19 +262,19 @@ socket.on('startingGame', (cards, index) => {
         player.addCard(card);
         img = new Image();
     }
-    msg.style.display = "none";
+    toggleElements("none", "none", "none", "none", "none", "none");
     showCardsOfOtherPlayers();
     player.showCards();
 });
 
 socket.on('flushDeck', () => {
+    console.log("Flushing deck");
     flushDeck();
 });
 
 
-// in this function, player should click and drag card and drag it over the deck
 socket.on('yourTurn', () => {
-    document.getElementById('yourTurn').style.display = "block";
+    toggleElements("none", "none", "none", "none", "none", "block");
     player.onTurn = true;
     playableCards();
 });
@@ -287,7 +286,6 @@ socket.on('sendPoints', () => {
     };
     socket.emit('sendingPoints', data);
 });
-
 
 socket.on('newCardPlayed', (cardInfo) => {
     let card = new Card(cardInfo.cardSuit, cardInfo.cardValue);
@@ -303,35 +301,18 @@ socket.on('newCardPlayed', (cardInfo) => {
 
 socket.on('takeDeck', () => {
     player.takeCards(deck.points);
-    takeButton.style.display = "block";
-    takeButton.addEventListener("click", function () {
-        flushDeck();
-        socket.emit('flushDeck');
-        document.getElementById('yourTurn').style.display = "block";
-        if (player.cards.length !== 0) {
-            player.onTurn = true;
-            playableCards();
-            takeButton.style.display = "none";
-        }
-    });
+    toggleElements("none", "none", "none", "none", "block", "none");
+    takeButton.addEventListener("click", takingDeck);
 });
 
 socket.on('gameOver', (player_points) => {
-    msg.style.display = "none";
-    table.style.display = "block";
-    let row = 1;
-    for (let key in player_points) {
-        table.rows[row].cells[0].innerHTML = key;
-        table.rows[row].cells[1].innerHTML = player_points[key];
-        row++;
-    }
-    readyButton.style.display = "block";
+    console.log("Client game over, showing table with results");
+    showTableResults(player_points);
     readyButton.addEventListener("click", function () {
-       socket.emit('playerReady');
+        socket.emit('playerReady');
         player = new Player();
         deck = new Deck();
-        readyButton.style.display = "none";
-        table.style.display = "none";
+        toggleElements("none", "none", "none", "none", "none", "none");
     });
 });
 
@@ -340,9 +321,45 @@ socket.on('notEnoughPlayers', () => {
     for (let i = 0; i < 32; i++) {
         document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).lastChild);
     }
-    msg.style.display = "block";
+    toggleElements("block", "none", "none", "none", "none", "block");
 });
 
+function takingDeck() {
+    console.log("Taking deck");
+    flushDeck();
+    socket.emit('flushDeck');
+    if (player.cards.length !== 0) {
+        player.onTurn = true;
+        playableCards();
+        toggleElements("none", "none", "none", "none", "none", "block");
+    } else {
+        console.log("Player has 0 cards, end game");
+        toggleElements("none", "none", "none", "none", "none", "none");
+        socket.emit('endGame');
+    }
+}
+
+function showTableResults(player_points) {
+    toggleElements("none", "block", "block", "block", "none", "none");
+    let row = 1;
+    for (let key in player_points) {
+        resultTable.rows[row].cells[0].innerHTML = key;
+        resultTable.rows[row].cells[1].innerHTML = player_points[key];
+
+        overallTable.rows[row].cells[0].innerHTML = key;
+        overallTable.rows[row].cells[1].innerHTML = player_points[key];
+        row++;
+    }
+}
+
+function toggleElements(msgE, resultTableE, overallTableE, readyButtonE, takeButtonE, yourTurnE) {
+    msg.style.display = msgE;
+    resultTable.style.display = resultTableE;
+    overallTable.style.display = overallTableE;
+    readyButton.style.display = readyButtonE;
+    takeButton.style.display = takeButtonE;
+    yourTurn.style.display = yourTurnE;
+}
 
 function allowDrop(event) {
     event.preventDefault();
@@ -360,7 +377,7 @@ function drop(event) {
             if (player.cards[card].id === card_id) {
                 if (player.cards[card].playable) {
                     let img = document.getElementById(card_id);
-                    img.classList.add('imgHand');
+                    img.classList.replace('imgHand', 'imgDeck');
                     event.target.appendChild(img);
                     deck.addCard(player.cards[card], player.id);
                     let data = {
@@ -373,7 +390,7 @@ function drop(event) {
                     player.cards.splice(card, 1);
                     socket.emit('moveDone', data);
                     player.onTurn = false;
-                    document.getElementById('yourTurn').style.display = "none";
+                    toggleElements("none", "none", "none", "none", "none", "none");
                     checkDeck();
                 }
             }

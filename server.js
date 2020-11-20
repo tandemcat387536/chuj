@@ -94,24 +94,25 @@ io.sockets.on('connection', (socket) => {
     });
 
     socket.on('fullDeck', (beginningPlayerID) => {
-        console.log("beginningPlayerID" + beginningPlayerID);
+        console.log("beginningPlayerID : " + beginningPlayerID);
         io.to(beginningPlayerID).emit('takeDeck');
         updateOrderOfPlayers(players, beginningPlayerID);
     });
 
-    socket.on('gameOver', () => {
-       console.log("game over");
+    socket.on('endGame', () => {
+       console.log("game over, " + socket.id + " everybody send points");
        io.emit("sendPoints");
     });
 
     socket.on('sendingPoints', function (data) {
+        console.log(data.playerID + " is sending points");
         player_points[data.playerID] = data.playerPoints;
         if (Object.keys(player_points).length === 4) {
             points_database.insert(player_points);
             //for (let key in player_points) {
             //    console.log("Player : " + key + " points : " + player_points[key])
             //}
-            io.emit("gameOver", player_points);
+            io.emit('gameOver', player_points);
         }
     });
 
@@ -130,7 +131,6 @@ io.sockets.on('connection', (socket) => {
             }
         }
     });
-
 
     function updateOrderOfPlayers(players, beginningPlayerID) {
         let first = players[0];
