@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:3000', {'force new connection':true});                    // connect to server
+const socket = io.connect(); // connect to server
 
 // CLASSES
 class Player {
@@ -195,9 +195,6 @@ function cmpSuits(first, second) {
 
 let player = new Player();
 let deck = new Deck();
-socket.on('connect', () => {
-    socket.emit('playerCreated');
-});
 
 const msg = document.getElementById('msg');
 const resultTable = document.getElementById('resultTable');
@@ -205,7 +202,15 @@ const overallTable = document.getElementById('overallTable');
 const takeButton = document.getElementById('takeDeck');
 const readyButton = document.getElementById('ready');
 const yourTurn = document.getElementById('yourTurn');
+const nameButton = document.getElementById('nameButton');
 const name = document.getElementById('name');
+
+function playerName() {
+    msg.style.display = "block";
+    nameButton.style.display = "none";
+    name.style.display = "none";
+    socket.emit('playerCreated');
+}
 
 function showCardsOfOtherPlayers() {
     for (let i = 0; i < 24; i++) {
@@ -264,6 +269,10 @@ function removeCardFromOtherPlayer(otherIndex) {
         nodeCard.removeChild(nodeCard.lastChild);
     }
 }
+
+socket.on('connect', () => {
+    //socket.emit('playerCreated');
+});
 
 socket.on('startingGame', (cards, index) => {
     player.id = socket.id;
