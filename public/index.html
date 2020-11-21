@@ -12,7 +12,10 @@
 
     <button type="button" class="takeDeck" id="takeDeck"> Zober karty </button>
 
-    <h2 id="msg"> Waiting for players to connect</h2>
+    <div class="msg">
+        <h2 id="msg"> Waiting for players to connect</h2>
+    </div>
+
 
     <button type="button" class="ready" id="ready"> Ready </button>
 
@@ -78,7 +81,9 @@
 
     <div class="deck" id="deck" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 
+    <div class="name" id="name"></div>
     <script src="/socket.io/socket.io.js"></script>
+
     <script src="client.js"></script>
 
 </body>
