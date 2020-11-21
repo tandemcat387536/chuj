@@ -117,12 +117,20 @@ io.sockets.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        let p = players.indexOf(socket.id);
+        console.log("player disconnected : " + players[p]);
+        players.splice(p, 1);
+        /*
         for (let p = 0; p < players.length; p++) {
             if (players[p] === socket.id) {
-                console.log("player disconnected : " + players[p]);
-                players.splice(p, 1);
+
             }
         }
+        //io.emit('notEnoughPlayers');
+        for (let key in player_overall_points) {
+            delete player_points.key;
+        }
+        newGame();*/
     });
 
     function storePoints(data) {
