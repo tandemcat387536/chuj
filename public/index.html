@@ -6,6 +6,9 @@
 </head>
 <body>
 
+    <label id="nameLabel"> Enter name </label>
+    <input type="text" id="name">
+
     <link href="style.css" rel="stylesheet"/>
 
     <!-- <button type="button" class="center" id="start"> Zacni hru </button> -->
@@ -81,7 +84,6 @@
 
     <div class="deck" id="deck" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 
-    <div class="name" id="name"></div>
     <script src="/socket.io/socket.io.js"></script>
 
     <script src="client.js"></script>

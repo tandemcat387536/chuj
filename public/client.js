@@ -9,6 +9,15 @@ class Player {
         this._points = 0;
         this._onTurn = false;
         this._playingIndex = -1;
+        this._name = null;
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set name(value) {
+        this._name = value;
     }
 
     nullParams () {
@@ -196,6 +205,7 @@ const overallTable = document.getElementById('overallTable');
 const takeButton = document.getElementById('takeDeck');
 const readyButton = document.getElementById('ready');
 const yourTurn = document.getElementById('yourTurn');
+const name = document.getElementById('name');
 
 function showCardsOfOtherPlayers() {
     for (let i = 0; i < 24; i++) {
@@ -257,6 +267,11 @@ function removeCardFromOtherPlayer(otherIndex) {
 
 socket.on('startingGame', (cards, index) => {
     player.id = socket.id;
+    if (name.value === "") {
+        player.name = index;
+    } else {
+        player.name = name.value;
+    }
     player.playingIndex = index;
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
@@ -271,6 +286,8 @@ socket.on('startingGame', (cards, index) => {
         img = new Image();
     }
     toggleElements("none", "none", "none", "none", "none", "none");
+    name.style.display = "none";
+    document.getElementById('nameLabel').style.display = "none";
     showCardsOfOtherPlayers();
     player.showCards();
 });
@@ -284,6 +301,7 @@ socket.on('flushDeck', () => {
 socket.on('yourTurn', () => {
     toggleElements("none", "none", "none", "none", "none", "block");
     player.onTurn = true;
+    console.log(player.name + "on turn");
     playableCards();
 });
 
