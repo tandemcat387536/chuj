@@ -204,12 +204,23 @@ const readyButton = document.getElementById('ready');
 const yourTurn = document.getElementById('yourTurn');
 const nameButton = document.getElementById('nameButton');
 const name = document.getElementById('name');
+const nameLabel = document.getElementById('nameLabel');
+let welcomeMsg = document.createElement("h2");
 
 function playerName() {
-    msg.style.display = "block";
-    nameButton.style.display = "none";
-    name.style.display = "none";
-    socket.emit('playerCreated');
+    if (name.value === "") {
+        alert("Please fill out your name");
+    } else {
+        nameLabel.style.display = "none";
+        nameButton.style.display = "none";
+        name.style.display = "none";
+        msg.style.display = "block";
+
+        welcomeMsg.innerHTML = "Welcome " + name.value;
+        document.body.appendChild(welcomeMsg);
+        player.name = name.value;
+        socket.emit('playerCreated');
+    }
 }
 
 function showCardsOfOtherPlayers() {
@@ -275,12 +286,8 @@ socket.on('connect', () => {
 });
 
 socket.on('startingGame', (cards, index) => {
+    welcomeMsg.style.display = "none";
     player.id = socket.id;
-    if (name.value === "") {
-        player.name = index;
-    } else {
-        player.name = name.value;
-    }
     player.playingIndex = index;
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
@@ -295,7 +302,7 @@ socket.on('startingGame', (cards, index) => {
         img = new Image();
     }
     toggleElements("none", "none", "none", "none", "none", "none");
-    name.style.display = "none";
+    //name.style.display = "none";
     document.getElementById('nameLabel').style.display = "none";
     showCardsOfOtherPlayers();
     player.showCards();

@@ -9,9 +9,11 @@
 
     <!-- <button type="button" class="center" id="start"> Zacni hru </button> -->
 
-    <label id="nameLabel"> Enter name </label>
-    <input type="text" id="name"><br>
-    <button type="button" id="nameButton" onclick=playerName()>Submit</button>
+    <form id="nameForm">
+        <label id="nameLabel"> Enter name </label>
+        <input type="text" id="name"  name="username"><br>
+        <button type="button" id="nameButton" onclick=playerName()>Submit</button>
+    </form>
 
     <button type="button" class="takeDeck" id="takeDeck"> Zober karty </button>
 
