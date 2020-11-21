@@ -16,21 +16,79 @@
     position: absolute;
     bottom: 0;
     left: 25%;
+    width: 70%;
 }
 
 .otherPlayerCard {
-    width: 100px;
-    height: 180px;
+    padding-right: 1%;
+    position: relative;
+    width: 8%;
+    height: 8%;
+    /*padding-top: -80%;*/
+}
+
+.left #cardsBack0 {
+    /*top: 5%;*/
+    z-index: 0;
+}
+
+.left #cardsBack1 {
+    /*top: 15%;*/
+    z-index: 1;
+}
+
+.left #cardsBack2 {
+    /*top: 25%;*/
+    z-index: 2;
+}
+
+.left #cardsBack3 {
+    top: 35%;
+    z-index: 3;
+}
+
+.left #cardsBack4 {
+    top: 45%;
+    z-index: 4;
+}
+
+.left #cardsBack5 {
+    top: 55%;
+    z-index: 5;
+}
+
+.left #cardsBack6 {
+    top: 65%;
+    z-index: 6;
+}
+
+.left #cardsBack7 {
+    top: 75%;
+    z-index: 7;
 }
 
 .imgDeck {
-    width: 100px;
-    height: 180px;
+    position: relative;
+    left: 14.5%;
+    top: 14.5%;
+    width: 15%;
+    height: 50%;
+    margin-right: 3%;
+}
+
+.imgNotPlayable{
+    padding-right: 1%;
+    width: 8%;
+    height: 8%;
+    opacity: 0.6;
 }
 
 .imgHand {
-    width: 100px;
-    height: 180px;
+    padding-right: 1%;
+    /*width: 100px;
+    height: 180px;*/
+    width: 8%;
+    height: 8%;
 }
 
 .imgHand:hover {
@@ -42,19 +100,22 @@
 .up {
     position: absolute;
     top: 10px;
-    left: 350px;
+    left: 25%;
+    width: 70%;
 }
 
 .left {
     position: absolute;
-    left: 100px;
-    width: 200px;
+    left: 10%;
+    width: 8%;
+    height: 90%;
 }
 
 .right {
     position: absolute;
-    right: 100px;
-    width: 200px;
+    right: 10%;
+    width: 8%;
+    height: 90%;
 }
 
 .center {
@@ -64,27 +125,39 @@
 }
 
 .deck {
-    position: relative;
-    left: 450px;
+    position: absolute;
+    /*left: 450px;
     top: 200px;
     float: left;
     width: 600px;
     height: 300px;
     margin: 10px;
-    padding: 10px;
-    /*border: 1px solid black;*/
+    padding: 10px;*/
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    border: 1px solid black;
+}
+
+
+.msg {
+    position: absolute;
+    left: 50%;
+    top: 10%;
 }
 
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
-    width: 100%;
+    width: 50%;
     margin-left: auto;
+    margin-right: auto;
     display: none;
 }
 
 table.overallTable {
-    margin-right: auto;
+    margin-top: 10%;
 }
 
 td, th {
