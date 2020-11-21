@@ -8,12 +8,9 @@
     <link href="style.css" rel="stylesheet"/>
 
     <!-- <button type="button" class="center" id="start"> Zacni hru </button> -->
-
-    <form id="nameForm">
-        <label id="nameLabel"> Enter name </label>
-        <input type="text" id="name"  name="username"><br>
-        <button type="button" id="nameButton" onclick=playerName()>Submit</button>
-    </form>
+    <label id="nameLabel"> Enter name </label>
+    <input type="text" id="name" name="username" required><br>
+    <button type="button" id="nameButton" onclick=playerName(event)>Submit</button>
 
     <button type="button" class="takeDeck" id="takeDeck"> Zober karty </button>
 
@@ -24,7 +21,7 @@
 
     <button type="button" class="ready" id="ready"> Ready </button>
 
-    <table id="resultTable">
+    <table id="resultTable" class="resultTable">
         <tbody>
             <tr>
                 <th>Player</th>
@@ -53,7 +50,7 @@
         <tbody>
             <tr>
                 <th>Player</th>
-                <th>Points</th>
+                <th>Overall Points</th>
             </tr>
             <tr>
                 <td></td>

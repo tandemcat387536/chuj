@@ -207,7 +207,8 @@ const name = document.getElementById('name');
 const nameLabel = document.getElementById('nameLabel');
 let welcomeMsg = document.createElement("h2");
 
-function playerName() {
+function playerName(e) {
+    e.preventDefault();
     if (name.value === "") {
         alert("Please fill out your name");
     } else {
@@ -219,7 +220,7 @@ function playerName() {
         welcomeMsg.innerHTML = "Welcome " + name.value;
         document.body.appendChild(welcomeMsg);
         player.name = name.value;
-        socket.emit('playerCreated');
+        socket.emit('playerCreated', player.name);
     }
 }
 
@@ -301,7 +302,7 @@ socket.on('startingGame', (cards, index) => {
         player.addCard(card);
         img = new Image();
     }
-    toggleElements("none", "none", "none", "none", "none", "none");
+    toggleElements("none", "none", "none", "none", "none");
     //name.style.display = "none";
     document.getElementById('nameLabel').style.display = "none";
     showCardsOfOtherPlayers();
@@ -315,7 +316,7 @@ socket.on('flushDeck', () => {
 
 
 socket.on('yourTurn', () => {
-    toggleElements("none", "none", "none", "none", "none", "block");
+    toggleElements("none", "none", "none", "none", "block");
     player.onTurn = true;
     console.log(player.name + "on turn");
     playableCards();
@@ -324,7 +325,7 @@ socket.on('yourTurn', () => {
 socket.on('sendPoints', () => {
     let data = {
         playerPoints: player.points,
-        playerID: player.id
+        playerName: player.name
     };
     socket.emit('sendingPoints', data);
 });
@@ -343,7 +344,7 @@ socket.on('newCardPlayed', (cardInfo) => {
 
 socket.on('takeDeck', () => {
     player.takeCards(deck.points);
-    toggleElements("none", "none", "none", "none", "block", "none");
+    toggleElements("none", "none","none", "block", "none");
     takeButton.addEventListener("click", takingDeck);
 });
 
@@ -364,14 +365,15 @@ socket.on('notEnoughPlayers', () => {
         //document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).lastChild);
     }
     flushDeck();
-    toggleElements("block", "none", "none", "none", "none", "none");
+    toggleElements("block", "none","none", "none", "none");
 });
 
 function playerReady() {
     socket.emit('playerReady');
     player.nullParams();
     deck.nullParams();
-    toggleElements("none", "none", "none", "none", "none", "none");
+    readyButton.style.display = "none";
+    //toggleElements("none", "none", "none", "none", "none", "none");
 }
 
 function takingDeck() {
@@ -381,16 +383,17 @@ function takingDeck() {
     if (player.cards.length !== 0) {
         player.onTurn = true;
         playableCards();
-        toggleElements("none", "none", "none", "none", "none", "block");
+        toggleElements("none", "none", "none", "none", "block");
     } else {
         console.log("Player has 0 cards, end game");
-        toggleElements("none", "none", "none", "none", "none", "none");
+        toggleElements("none", "none", "none", "none", "none");
         socket.emit('endGame');
     }
 }
 
 function showTableResults(player_points, player_overall_points) {
-    toggleElements("none", "block", "block", "block", "none", "none");
+    overallTable.style.display = "block";
+    toggleElements("none", "block", "block", "none", "none");
     let row = 1;
     for (let key in player_points) {
         resultTable.rows[row].cells[0].innerHTML = key;
@@ -406,10 +409,9 @@ function showTableResults(player_points, player_overall_points) {
     }
 }
 
-function toggleElements(msgE, resultTableE, overallTableE, readyButtonE, takeButtonE, yourTurnE) {
+function toggleElements(msgE, resultTableE, readyButtonE, takeButtonE, yourTurnE) {
     msg.style.display = msgE;
     resultTable.style.display = resultTableE;
-    overallTable.style.display = overallTableE;
     readyButton.style.display = readyButtonE;
     takeButton.style.display = takeButtonE;
     yourTurn.style.display = yourTurnE;
@@ -453,8 +455,9 @@ function drop(event) {
 }
 
 /* TODO
-- when one player plays card, you can see on your screen that card has been removed from his "hand"
-- card in deck wont be hooverable
-- results after game over
-- after the game, add option to start again
+- add option for player whether he wants to add to other 20 points or subtract from his points 20 points after
+  taking 20 points
+- all buttons, messages style
+- after reaching 100 points, game over
+
  */

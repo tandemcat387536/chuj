@@ -57,7 +57,7 @@ let readyPlayers = 0;
 
 io.sockets.on('connection', (socket) => {
 
-    socket.on('playerCreated', () => {
+    socket.on('playerCreated', (player_name) => {
         console.log('new player created: ' + socket.id);
 
         if (players.length < 4) {
@@ -105,7 +105,7 @@ io.sockets.on('connection', (socket) => {
     });
 
     socket.on('sendingPoints', function (data) {
-        console.log(data.playerID + " is sending points");
+        console.log(data.playerName + " is sending points");
         storePoints(data);
     });
 
@@ -125,17 +125,21 @@ io.sockets.on('connection', (socket) => {
             if (players[p] === socket.id) {
 
             }
-        }
+        }*/
         //io.emit('notEnoughPlayers');
         for (let key in player_overall_points) {
             delete player_points.key;
+            delete player_overall_points.key;
         }
-        newGame();*/
     });
 
     function storePoints(data) {
-        player_points[data.playerID] = data.playerPoints;
-        player_overall_points[data.playerID] = (player_overall_points[data.playerID] + data.playerPoints) || data.playerPoints;
+        player_points[data.playerName] = data.playerPoints;
+        player_overall_points[data.playerName] = (player_overall_points[data.playerName] + data.playerPoints) || data.playerPoints;
+
+        console.log(player_points);
+        console.log(player_overall_points);
+
         if (Object.keys(player_points).length === 4) {
             points_database.insert(player_points);
             for (let key in player_points) {
