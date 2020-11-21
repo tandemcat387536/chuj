@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:3000');                    // connect to server
+const socket = io.connect('http://localhost:3000', {'force new connection':true});                    // connect to server
 
 // CLASSES
 class Player {
@@ -9,17 +9,8 @@ class Player {
         this._points = 0;
         this._onTurn = false;
         this._playingIndex = -1;
-        //this._overallPoints = 0;
-    }
-/*
-    get overallPoints() {
-        return this._overallPoints;
     }
 
-    addOverallPoints(points) {
-        this._overallPoints += points;
-    }
-*/
     nullParams () {
         this._cards = [];
         this._points = 0;
@@ -208,12 +199,10 @@ const yourTurn = document.getElementById('yourTurn');
 
 function showCardsOfOtherPlayers() {
     for (let i = 0; i < 24; i++) {
-        let img = new Image();
-        img.src = "cards/back.png";
-        img.id = "cards/back" + i;
-        img.width = 100;
-        img.height = 180;
+        let img = document.createElement("img");
         img.classList.add("otherPlayerCard");
+        img.src = "cards/back.png";
+        img.id = "cardsBack" + Math.floor( i % 8);
         document.getElementById(Math.floor( i / 8) + 1).appendChild(img);
     }
 }
@@ -239,11 +228,11 @@ function playableCards() {
         if (deck.cards.length !== 0) {
             if (card.suit === deck.cards[0].suit) {
                 card.playable = true;
-                card.image.classList.replace('imgDeck', 'imgHand');
+                card.image.classList.replace('imgNotPlayable', 'imgHand');
                 hasSuit = true;
             } else {
                 card.playable = false;
-                card.image.classList.replace('imgHand', 'imgDeck');
+                card.image.classList.replace('imgHand', 'imgNotPlayable');
             }
         }
         //console.log("Card : " + card.id + " playable : " + card.playable);
@@ -252,7 +241,7 @@ function playableCards() {
     if (!hasSuit) {
         for (let card of player.cards) {
             card.playable = true;
-            card.image.classList.replace('imgDeck', 'imgHand');
+            card.image.classList.replace('imgNotPlayable', 'imgHand');
             //console.log("Card : " + card.id + " playable : " + card.playable);
         }
     }
@@ -331,11 +320,17 @@ socket.on('gameOver', (player_points, player_overall_points) => {
 });
 
 socket.on('notEnoughPlayers', () => {
-    player.cards = [];
-    for (let i = 0; i < 32; i++) {
-        document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).lastChild);
+    console.log("Not enough players, deleting elements");
+    player.nullParams();
+    for (let i = 0; i < 4; i++) {
+        const nodeDeck = document.getElementById(i);
+        while (nodeDeck.firstChild) {
+            nodeDeck.removeChild(nodeDeck.lastChild);
+        }
+        //document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).lastChild);
     }
-    toggleElements("block", "none", "none", "none", "none", "block");
+    flushDeck();
+    toggleElements("block", "none", "none", "none", "none", "none");
 });
 
 function playerReady() {
