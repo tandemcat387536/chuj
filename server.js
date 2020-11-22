@@ -48,7 +48,7 @@ function shuffle(array) {
 
 let actualPlayer;
 let nextBeginningPlayerID = null;
-const players = [];
+let players = [];
 let cards = generateCards();
 let player_points = {};
 let player_overall_points = {};
@@ -62,12 +62,17 @@ io.sockets.on('connection', (socket) => {
 
         if (players.length < 4) {
             players.push(socket.id);
+            player_overall_points[socket.id] = {playerName: player_name, playerPoints: 0};
             if (players.length === 4) {
                 console.log("4 players connected");
                 actualPlayer = 0;
+                let playerNames = [];
+                for (let key in player_overall_points) {
+                    playerNames.push(player_overall_points[key].playerName);
+                }
 
                 for (let i = 0; i < 4; i++) {
-                    io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
+                    io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i, playerNames);
                 }
 
                 nextBeginningPlayerID = players[1];
@@ -119,28 +124,30 @@ io.sockets.on('connection', (socket) => {
     socket.on('disconnect', () => {
         let p = players.indexOf(socket.id);
         if (p !== -1) {
-            console.log("player disconnected : " + players[p]);
-            players.splice(p, 1);
-            for (let key in player_overall_points) {
-                delete player_points.key;
-                delete player_overall_points.key;
-            }
+            playerWhoPlayedDisconnects(p);
         }
-        /*
-        for (let p = 0; p < players.length; p++) {
-            if (players[p] === socket.id) {
-
-            }
-        }*/
-        //io.emit('notEnoughPlayers');
     });
+
+    function playerWhoPlayedDisconnects(p) {
+        console.log("player disconnected : " + players[p]);
+        for (let key in player_points) {
+            delete player_points.key;
+        }
+
+        delete player_overall_points[players[p]];
+
+        io.emit('cancellingGame');
+        actualPlayer = 0;
+        nextBeginningPlayerID = null;
+        cards = generateCards();
+        shuffle(cards);
+        readyPlayers = 0;
+        players.splice(p, 1);
+    }
 
     function storePoints(data) {
         player_points[data.playerName] = data.playerPoints;
-        player_overall_points[data.playerName] = (player_overall_points[data.playerName] + data.playerPoints) || data.playerPoints;
-
-        console.log(player_points);
-        console.log(player_overall_points);
+        player_overall_points[data.playerID].playerPoints = (player_overall_points[data.playerID].playerPoints + data.playerPoints);    // || data.playerPoints;
 
         if (Object.keys(player_points).length === 4) {
             points_database.insert(player_points);

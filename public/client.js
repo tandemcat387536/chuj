@@ -194,6 +194,7 @@ function cmpSuits(first, second) {
 }
 
 let player = new Player();
+let players = [];
 let deck = new Deck();
 
 const msg = document.getElementById('msgText');
@@ -287,10 +288,15 @@ socket.on('connect', () => {
     //socket.emit('playerCreated');
 });
 
-socket.on('startingGame', (cards, index) => {
+socket.on('newPlayer', (otherPlayerName) => {
+   players.push(otherPlayerName);
+});
+
+socket.on('startingGame', (cards, index, playerNames) => {
     welcomeMsg.style.display = "none";
     player.id = socket.id;
     player.playingIndex = index;
+    showOverallTable(playerNames);
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
         let card = new Card(cards[i].suit, cards[i].value);
@@ -326,7 +332,8 @@ socket.on('yourTurn', () => {
 socket.on('sendPoints', () => {
     let data = {
         playerPoints: player.points,
-        playerName: player.name
+        playerName: player.name,
+        playerID: player.id
     };
     socket.emit('sendingPoints', data);
 });
@@ -355,7 +362,7 @@ socket.on('gameOver', (player_points, player_overall_points) => {
     readyButton.addEventListener("click", playerReady);
 });
 
-socket.on('notEnoughPlayers', () => {
+socket.on('cancellingGame', () => {
     console.log("Not enough players, deleting elements");
     player.nullParams();
     for (let i = 0; i < 4; i++) {
@@ -366,6 +373,7 @@ socket.on('notEnoughPlayers', () => {
         //document.getElementById(Math.floor( i / 8)).removeChild(document.getElementById(Math.floor( i / 8)).lastChild);
     }
     flushDeck();
+    overallTable.style.display = "none";
     toggleElements("block", "none","none", "none", "none");
 });
 
@@ -392,8 +400,17 @@ function takingDeck() {
     }
 }
 
-function showTableResults(player_points, player_overall_points) {
+function showOverallTable(playerNames) {
     overallTable.style.display = "block";
+    let row = 1;
+    for (let name of playerNames) {
+        overallTable.rows[row].cells[0].innerHTML = name;
+        overallTable.rows[row].cells[1].innerHTML = "0";
+        row++;
+    }
+}
+
+function showTableResults(player_points, player_overall_points) {
     toggleElements("none", "block", "block", "none", "none");
     let row = 1;
     for (let key in player_points) {
@@ -404,8 +421,8 @@ function showTableResults(player_points, player_overall_points) {
 
     row = 1;
     for (let key in player_overall_points) {
-        overallTable.rows[row].cells[0].innerHTML = key;
-        overallTable.rows[row].cells[1].innerHTML = player_overall_points[key];
+        overallTable.rows[row].cells[0].innerHTML = player_overall_points[key].playerName;
+        overallTable.rows[row].cells[1].innerHTML = player_overall_points[key].playerPoints;
         row++;
     }
 }
@@ -427,8 +444,8 @@ function drag(event) {
 }
 
 function drop(event) {
-    event.preventDefault();
     if (player.onTurn === true) {
+        event.preventDefault();
         let card_id = event.dataTransfer.getData("text");
         for (let card = 0; card < player.cards.length; card++) {
             if (player.cards[card].id === card_id) {
