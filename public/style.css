@@ -99,9 +99,12 @@
 
 .yourTurn {
     font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: xx-large;
+    color: #0c8f0d;
+    text-shadow: 1px 1px #0e130e;
     position: absolute;
     display: none;
-    top: 70%;
+    top: 68%;
     left: 42%;
 }
 
