@@ -427,15 +427,19 @@ function drag(event) {
 }
 
 function drop(event) {
+    event.preventDefault();
     if (player.onTurn === true) {
-        event.preventDefault();
         let card_id = event.dataTransfer.getData("text");
         for (let card = 0; card < player.cards.length; card++) {
             if (player.cards[card].id === card_id) {
                 if (player.cards[card].playable) {
                     let img = document.getElementById(card_id);
                     img.classList.replace('imgHand', 'imgDeck');
-                    event.target.appendChild(img);
+                    if (event.target.id === 'deck') {
+                        event.target.appendChild(img);
+                    } else {
+                        event.target.parentNode.appendChild(img);
+                    }
                     deck.addCard(player.cards[card], player.id);
                     let data = {
                         cardId: card_id,
