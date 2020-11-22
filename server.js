@@ -49,6 +49,7 @@ function shuffle(array) {
 let actualPlayer;
 let nextBeginningPlayerID = null;
 let players = [];
+let playerNames = [];
 let cards = generateCards();
 let player_points = {};
 let player_overall_points = {};
@@ -66,7 +67,6 @@ io.sockets.on('connection', (socket) => {
             if (players.length === 4) {
                 console.log("4 players connected");
                 actualPlayer = 0;
-                let playerNames = [];
                 for (let key in player_overall_points) {
                     playerNames.push(player_overall_points[key].playerName);
                 }
@@ -128,13 +128,14 @@ io.sockets.on('connection', (socket) => {
         }
     });
 
-    function playerWhoPlayedDisconnects(p) {
-        console.log("player disconnected : " + players[p]);
+    function playerWhoPlayedDisconnects(playerIndex) {
+        console.log("player disconnected : " + players[playerIndex]);
+        let nameIndex = playerNames.indexOf(player_overall_points[players[playerIndex]].playerName);
         for (let key in player_points) {
             delete player_points.key;
         }
 
-        delete player_overall_points[players[p]];
+        delete player_overall_points[players[playerIndex]];
 
         io.emit('cancellingGame');
         actualPlayer = 0;
@@ -142,7 +143,8 @@ io.sockets.on('connection', (socket) => {
         cards = generateCards();
         shuffle(cards);
         readyPlayers = 0;
-        players.splice(p, 1);
+        playerNames.splice(nameIndex, i);
+        players.splice(playerIndex, 1);
     }
 
     function storePoints(data) {
@@ -180,7 +182,7 @@ io.sockets.on('connection', (socket) => {
         cards = generateCards();
         shuffle(cards);
         for (let i = 0; i < 4; i++) {
-            io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i);
+            io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i, playerNames);
         }
         io.to(players[actualPlayer]).emit('yourTurn');
         console.log("Player is on turn : " + players[actualPlayer]);

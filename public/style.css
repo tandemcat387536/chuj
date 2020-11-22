@@ -104,7 +104,7 @@
     text-shadow: 1px 1px #0e130e;
     position: absolute;
     display: none;
-    top: 68%;
+    top: 66%;
     left: 42%;
 }
 
@@ -122,7 +122,7 @@
 
 .bottom {
     position: absolute;
-    bottom: 0;
+    bottom: 5%;
     left: 25%;
     width: 70%;
 }

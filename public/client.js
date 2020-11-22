@@ -401,12 +401,14 @@ function takingDeck() {
 }
 
 function showOverallTable(playerNames) {
-    overallTable.style.display = "block";
-    let row = 1;
-    for (let name of playerNames) {
-        overallTable.rows[row].cells[0].innerHTML = name;
-        overallTable.rows[row].cells[1].innerHTML = "0";
-        row++;
+    if (overallTable.style.display !== "block"){
+            overallTable.style.display = "block";
+        let row = 1;
+        for (let name of playerNames) {
+            overallTable.rows[row].cells[0].innerHTML = name;
+            overallTable.rows[row].cells[1].innerHTML = "0";
+            row++;
+        }
     }
 }
 
