@@ -78,17 +78,38 @@
     background-image: linear-gradient(to bottom, #7b7b7b, #2a2a2a);
 }
 
+.lightGreen {
+    color: #eaffe9;
+    text-shadow: 0 0 2px rgba(0, 0, 0, .7);
+    background-color: #4a9a1f;
+    border-color: #00371a #202020 #222;
+    background-image: -webkit-linear-gradient(top, #005d23, #0c8f0d);
+    background-image: -moz-linear-gradient(top, #005d23, #0c8f0d);
+    background-image: -o-linear-gradient(top, #005d23, #0c8f0d);
+    background-image: linear-gradient(to bottom, #005d23, #0c8f0d);
+}
+
+.lightGreen:hover {
+    background-color: #313131;
+    background-image: -webkit-linear-gradient(top, #004920, #0c6d0d);
+    background-image: -moz-linear-gradient(top, #004920, #0c6d0d);
+    background-image: -o-linear-gradient(top, #004920, #0c6d0d);
+    background-image: linear-gradient(to bottom, #004920, #0c6d0d);
+}
+
 .yourTurn {
     display: none;
 }
 
 .takeDeck {
-    position: relative;
+    top: 63%;
+    left: 45%;
     display: none;
 }
 
 .ready {
-    position: relative;
+    top: 63%;
+    left: 45%;
     display: none;
 }
 
