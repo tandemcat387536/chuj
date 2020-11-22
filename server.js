@@ -118,8 +118,14 @@ io.sockets.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         let p = players.indexOf(socket.id);
-        console.log("player disconnected : " + players[p]);
-        players.splice(p, 1);
+        if (p !== -1) {
+            console.log("player disconnected : " + players[p]);
+            players.splice(p, 1);
+            for (let key in player_overall_points) {
+                delete player_points.key;
+                delete player_overall_points.key;
+            }
+        }
         /*
         for (let p = 0; p < players.length; p++) {
             if (players[p] === socket.id) {
@@ -127,10 +133,6 @@ io.sockets.on('connection', (socket) => {
             }
         }*/
         //io.emit('notEnoughPlayers');
-        for (let key in player_overall_points) {
-            delete player_points.key;
-            delete player_overall_points.key;
-        }
     });
 
     function storePoints(data) {
