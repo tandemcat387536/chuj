@@ -196,7 +196,7 @@ function cmpSuits(first, second) {
 let player = new Player();
 let deck = new Deck();
 
-const msg = document.getElementById('msg');
+const msg = document.getElementById('msgText');
 const resultTable = document.getElementById('resultTable');
 const overallTable = document.getElementById('overallTable');
 const takeButton = document.getElementById('takeDeck');
@@ -215,9 +215,10 @@ function playerName(e) {
         nameLabel.style.display = "none";
         nameButton.style.display = "none";
         name.style.display = "none";
-        msg.style.display = "block";
 
-        welcomeMsg.innerHTML = "Welcome " + name.value;
+        msg.style.left = "20%";
+        msg.innerHTML = "Vitaj chuju " + name.value + ", pockaj na ostatnych chuju";
+        //welcomeMsg.innerHTML = "Welcome " + name.value;
         document.body.appendChild(welcomeMsg);
         player.name = name.value;
         socket.emit('playerCreated', player.name);

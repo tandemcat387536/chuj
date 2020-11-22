@@ -219,13 +219,24 @@
     height: 50%;
 }
 
-
+/*
 .msg {
-    position: absolute;
+    position: relative;
     font-family: "Comic Sans MS", cursive, sans-serif;
-    font-size: 32px;
+    font-size: 35px;
     left: 27%;
     top: 10%;
+    width: 80%;
+}
+*/
+
+#msgText {
+    position: relative;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 40px;
+    left: 32%;
+    top: 10%;
+    width: 80%;
 }
 
 table.overallTable {
