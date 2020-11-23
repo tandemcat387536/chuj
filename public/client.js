@@ -242,7 +242,7 @@ function showCardsOfOtherPlayers() {
 
 function checkDeck() {
     if (deck.cards.length === 4) {
-        //console.log("Highest card :" + deck.highestCard.id + " beginningPlayerID :" + deck.beginningPlayer_id);
+        ////console.log("Highest card :" + deck.highestCard.id + " beginningPlayerID :" + deck.beginningPlayer_id);
         socket.emit('fullDeck', deck.beginningPlayer_id);
     }
 }
@@ -268,14 +268,14 @@ function playableCards() {
                 card.image.classList.replace('imgHand', 'imgNotPlayable');
             }
         }
-        //console.log("Card : " + card.id + " playable : " + card.playable);
+        ////console.log("Card : " + card.id + " playable : " + card.playable);
     }
 
     if (!hasSuit) {
         for (let card of player.cards) {
             card.playable = true;
             card.image.classList.replace('imgNotPlayable', 'imgHand');
-            //console.log("Card : " + card.id + " playable : " + card.playable);
+            ////console.log("Card : " + card.id + " playable : " + card.playable);
         }
     }
 }
@@ -319,7 +319,7 @@ socket.on('startingGame', (cards, index, playerNames) => {
     }
     showOverallTable(playerNames);
     showNames(playerNames);
-    //console.log("Playing index of" + player.id +" is " + player.playingIndex);
+    ////console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
         let card = new Card(cards[i].suit, cards[i].value);
         let img = new Image();
@@ -339,7 +339,7 @@ socket.on('startingGame', (cards, index, playerNames) => {
 });
 
 socket.on('flushDeck', () => {
-    console.log("Flushing deck");
+    //console.log("Flushing deck");
     flushDeck();
 });
 
@@ -348,7 +348,7 @@ socket.on('yourTurn', () => {
     socket.emit('myTurn');
     toggleElements("none", "none", "none", "none", "block", "block");
     player.onTurn = true;
-    console.log(player.name + "on turn");
+    //console.log(player.name + "on turn");
     playableCards();
 });
 
@@ -380,7 +380,7 @@ socket.on('takeDeck', () => {
 });
 
 socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTable) => {
-    console.log("Client game over, showing table with results");
+    //console.log("Client game over, showing table with results");
     showTableResults(player_points, player_overall_points, showTable);
     if (endOfGame) {
         for (let key in player_overall_points) {
@@ -397,7 +397,7 @@ socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTabl
 });
 
 socket.on('cancellingGame', () => {
-    console.log("Not enough players, deleting elements");
+    //console.log("Not enough players, deleting elements");
     player.nullParams();
     for (let i = 0; i < 4; i++) {
         const nodeDeck = document.getElementById(i);
@@ -455,7 +455,7 @@ function playerReady() {
 }
 
 function takingDeck() {
-    console.log("Taking deck");
+    //console.log("Taking deck");
     flushDeck();
     socket.emit('flushDeck');
     if (player.cards.length !== 0) {
@@ -464,7 +464,7 @@ function takingDeck() {
         playableCards();
         toggleElements("none", "none", "none", "none", "block", "block");
     } else {
-        console.log("Player has 0 cards, end game");
+        //console.log("Player has 0 cards, end game");
         toggleElements("none", "none", "none", "none", "none", "none");
         socket.emit('endGame');
     }
@@ -506,8 +506,8 @@ function showTableResults(player_points, player_overall_points, showTable) {
 
 function showNames(playerNames) {
     for (let key in playerNames) {
-        console.log("Key : " + key + " playerIndex : " + player.playingIndex);
-        console.log((4 + (key - player.playingIndex)) % 4);
+        //console.log("Key : " + key + " playerIndex : " + player.playingIndex);
+        //console.log((4 + (key - player.playingIndex)) % 4);
         switch ((4 + (key - player.playingIndex)) % 4) {
             case 0:
                 myName.innerHTML = playerNames[key];
