@@ -295,7 +295,9 @@ socket.on('newPlayer', (otherPlayerName) => {
 socket.on('startingGame', (cards, index, playerNames) => {
     welcomeMsg.style.display = "none";
     player.id = socket.id;
-    player.playingIndex = index;
+    if (player.playingIndex === -1) {
+        player.playingIndex = index;
+    }
     showOverallTable(playerNames);
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
@@ -356,10 +358,21 @@ socket.on('takeDeck', () => {
     takeButton.addEventListener("click", takingDeck);
 });
 
-socket.on('gameOver', (player_points, player_overall_points) => {
+socket.on('gameOver', (player_points, player_overall_points, endOfGame) => {
     console.log("Client game over, showing table with results");
     showTableResults(player_points, player_overall_points);
-    readyButton.addEventListener("click", playerReady);
+    if (endOfGame) {
+        for (let key in player_overall_points) {
+            if (player_overall_points[key].playerPoints > 100) {
+                document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju, hrac "
+                    + player_overall_points[key].playerName + " prehral, no to je chuj.";
+            }
+        }
+        document.getElementById('newGame').style.display = "block";
+        toggleElements("none", "block", "none", "none", "none");
+    } else {
+        readyButton.addEventListener("click", playerReady);
+    }
 });
 
 socket.on('cancellingGame', () => {
@@ -376,6 +389,22 @@ socket.on('cancellingGame', () => {
     overallTable.style.display = "none";
     toggleElements("block", "none","none", "none", "none");
 });
+
+socket.on('choosePoints', () => {
+    document.getElementById('choosePoints').style.display = "block";
+});
+
+function subtractPoints(e) {
+    e.preventDefault();
+    socket.emit('subtract');
+    document.getElementById('choosePoints').style.display = "none";
+}
+
+function addPoints(e) {
+    e.preventDefault();
+    socket.emit('add');
+    document.getElementById('choosePoints').style.display = "none";
+}
 
 function playerReady() {
     socket.emit('playerReady');
@@ -416,8 +445,8 @@ function showTableResults(player_points, player_overall_points) {
     toggleElements("none", "block", "block", "none", "none");
     let row = 1;
     for (let key in player_points) {
-        resultTable.rows[row].cells[0].innerHTML = key;
-        resultTable.rows[row].cells[1].innerHTML = player_points[key];
+        resultTable.rows[row].cells[0].innerHTML = player_points[key].playerName;
+        resultTable.rows[row].cells[1].innerHTML = player_points[key].playerPoints;
         row++;
     }
 
