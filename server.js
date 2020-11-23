@@ -121,12 +121,47 @@ io.sockets.on('connection', (socket) => {
         }
     });
 
+    socket.on('subtract', () => {
+        player_overall_points[socket.id].playerPoints -= 20;
+        if (player_overall_points[socket.id].playerPoints < 0) {
+            player_overall_points[socket.id].playerPoints = 0;
+        }
+        io.emit('gameOver', player_points, player_overall_points, false);
+    });
+
+    socket.on('add', () => {
+        for (let key in player_overall_points) {
+            if (key !== socket.id) {
+                player_overall_points[key].playerPoints += 20;
+            } else {
+                player_overall_points[key].playerPoints -= 20;
+            }
+        }
+        let lost = checkPoints();
+        io.emit('gameOver', player_points, player_overall_points, lost);
+    });
+
     socket.on('disconnect', () => {
         let p = players.indexOf(socket.id);
         if (p !== -1) {
             playerWhoPlayedDisconnects(p);
         }
     });
+
+    // returns true if player has lost, false otherwise
+    function checkPoints() {
+        for (let key in player_overall_points) {
+            if (player_overall_points[key].playerPoints === 100) {
+                player_overall_points[key].playerPoints -= 20;
+                if (player_overall_points[key].playerPoints < 0) {
+                    player_overall_points[key].playerPoints = 0;
+                }
+            } else if (player_overall_points[key].playerPoints > 100) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     function playerWhoPlayedDisconnects(playerIndex) {
         console.log("player disconnected : " + players[playerIndex]);
@@ -143,23 +178,34 @@ io.sockets.on('connection', (socket) => {
         cards = generateCards();
         shuffle(cards);
         readyPlayers = 0;
-        playerNames.splice(nameIndex, i);
+        playerNames.splice(nameIndex, 1);
         players.splice(playerIndex, 1);
     }
 
     function storePoints(data) {
-        player_points[data.playerName] = data.playerPoints;
-        player_overall_points[data.playerID].playerPoints = (player_overall_points[data.playerID].playerPoints + data.playerPoints);    // || data.playerPoints;
+        player_points[data.playerID] = {playerName: data.playerName, playerPoints: data.playerPoints};
+        player_overall_points[data.playerID].playerPoints = player_overall_points[data.playerID].playerPoints + data.playerPoints;
 
+        let twenty = false;
+        console.log(player_points);
         if (Object.keys(player_points).length === 4) {
             points_database.insert(player_points);
             for (let key in player_points) {
-                console.log("Player : " + key + " points : " + player_points[key])
+
+                console.log("Player : " + key + " points : " + player_points[key].playerPoints);
+                if (player_points[key].playerPoints === 20) {
+                    io.to(key).emit('choosePoints');
+                    twenty = true;
+                }
             }
-            io.emit('gameOver', player_points, player_overall_points);
-        }
-        for (let key in player_points) {
-            delete player_points.key;
+            if (!twenty) {
+                let lost = checkPoints();
+                io.emit('gameOver', player_points, player_overall_points, lost);
+            }
+
+            for (let key in player_points) {
+                delete player_points[key];
+            }
         }
     }
 
