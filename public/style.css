@@ -78,23 +78,42 @@
     background-image: linear-gradient(to bottom, #7b7b7b, #2a2a2a);
 }
 
+.lightRed {
+    color: #eaffe9;
+    text-shadow: 0 0 2px rgba(0, 0, 0, .7);
+    background-color: #9a2619;
+    border-color: #370d0c #202020 #222;
+    background-image: -webkit-linear-gradient(top, #8f1714, #5d0d00);
+    background-image: -moz-linear-gradient(top, #8f1714, #5d0d00);
+    background-image: -o-linear-gradient(top, #8f1714, #5d0d00);
+    background-image: linear-gradient(to bottom, #8f1714, #5d0d00);
+}
+
+.lightRed:hover {
+    background-color: #313131;
+    background-image: -webkit-linear-gradient(top, #671613, #370d0c);
+    background-image: -moz-linear-gradient(top, #671613, #370d0c);
+    background-image: -o-linear-gradient(top, #671613, #370d0c);
+    background-image: linear-gradient(to bottom, #671613, #370d0c);
+}
+
 .lightGreen {
     color: #eaffe9;
     text-shadow: 0 0 2px rgba(0, 0, 0, .7);
     background-color: #4a9a1f;
     border-color: #00371a #202020 #222;
-    background-image: -webkit-linear-gradient(top, #005d23, #0c8f0d);
-    background-image: -moz-linear-gradient(top, #005d23, #0c8f0d);
-    background-image: -o-linear-gradient(top, #005d23, #0c8f0d);
-    background-image: linear-gradient(to bottom, #005d23, #0c8f0d);
+    background-image: -webkit-linear-gradient(top, #0c8f0d, #005d23);
+    background-image: -moz-linear-gradient(top, #0c8f0d, #005d23);
+    background-image: -o-linear-gradient(top, #0c8f0d, #005d23);
+    background-image: linear-gradient(to bottom, #0c8f0d, #005d23);
 }
 
 .lightGreen:hover {
     background-color: #313131;
-    background-image: -webkit-linear-gradient(top, #004920, #0c6d0d);
-    background-image: -moz-linear-gradient(top, #004920, #0c6d0d);
-    background-image: -o-linear-gradient(top, #004920, #0c6d0d);
-    background-image: linear-gradient(to bottom, #004920, #0c6d0d);
+    background-image: -webkit-linear-gradient(top, #0c6d0d, #004920);
+    background-image: -moz-linear-gradient(top, #0c6d0d, #004920);
+    background-image: -o-linear-gradient(top, #0c6d0d, #004920);
+    background-image: linear-gradient(to bottom, #0c6d0d, #004920);
 }
 
 .yourTurn {
@@ -130,8 +149,8 @@
 .otherPlayerCard {
     padding-right: 1%;
     position: relative;
-    width: 8%;
-    height: 8%;
+    max-width: 8%;
+    max-height: 8%;
     /*padding-top: -80%;*/
 }
 
@@ -261,7 +280,7 @@
 #msgText {
     position: relative;
     font-family: "Comic Sans MS", cursive, sans-serif;
-    font-size: 40px;
+    font-size: 40vw;
     left: 32%;
     top: 10%;
     width: 80%;
@@ -375,4 +394,16 @@ tbody:hover td {
 tbody:hover tr:hover td {
     color: #444;
     text-shadow: 0 1px 0 #fff;
+}
+
+.choosePoints {
+
+}
+
+.subtractPoints{
+
+}
+
+.addPoints{
+
 }
