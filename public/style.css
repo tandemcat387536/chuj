@@ -155,44 +155,68 @@
     /*padding-top: -80%;*/
 }
 
-.left #cardsBack0 {
-    /*top: 5%;*/
+.left #cardsBack0, .right #cardsBack0 {
+    top: 20%;
     z-index: 0;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack1 {
-    /*top: 15%;*/
+.left #cardsBack1, .right #cardsBack1 {
+    top: 27%;
     z-index: 1;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack2 {
-    /*top: 25%;*/
+.left #cardsBack2, .right #cardsBack2 {
+    top: 34%;
     z-index: 2;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack3 {
-    top: 35%;
+.left #cardsBack3, .right #cardsBack3 {
+    top: 41%;
     z-index: 3;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack4 {
-    top: 45%;
+.left #cardsBack4, .right #cardsBack4 {
+    top: 48%;
     z-index: 4;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack5 {
+.left #cardsBack5, .right #cardsBack5 {
     top: 55%;
     z-index: 5;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack6 {
-    top: 65%;
+.left #cardsBack6, .right #cardsBack6 {
+    top: 62%;
     z-index: 6;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-.left #cardsBack7 {
-    top: 75%;
+.left #cardsBack7, .right #cardsBack7 {
+    top: 69%;
     z-index: 7;
+    position: absolute;
+    max-width: 70%;
+    max-height: 70%;
 }
 
 .imgDeck {
@@ -424,3 +448,5 @@ tr:last-of-type td:last-child {
 .newGame {
     display: none;
 }
+
+
