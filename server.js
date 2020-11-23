@@ -126,7 +126,7 @@ io.sockets.on('connection', (socket) => {
         if (player_overall_points[socket.id].playerPoints < 0) {
             player_overall_points[socket.id].playerPoints = 0;
         }
-        io.emit('gameOver', player_points, player_overall_points, false);
+        io.emit('gameOver', player_points, player_overall_points, false, false);
     });
 
     socket.on('add', () => {
@@ -138,7 +138,7 @@ io.sockets.on('connection', (socket) => {
             }
         }
         let lost = checkPoints();
-        io.emit('gameOver', player_points, player_overall_points, lost);
+        io.emit('gameOver', player_points, player_overall_points, lost, false);
     });
 
     socket.on('disconnect', () => {
@@ -200,7 +200,7 @@ io.sockets.on('connection', (socket) => {
             }
             if (!twenty) {
                 let lost = checkPoints();
-                io.emit('gameOver', player_points, player_overall_points, lost);
+                io.emit('gameOver', player_points, player_overall_points, lost, true);
             }
 
             for (let key in player_points) {

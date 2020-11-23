@@ -358,9 +358,9 @@ socket.on('takeDeck', () => {
     takeButton.addEventListener("click", takingDeck);
 });
 
-socket.on('gameOver', (player_points, player_overall_points, endOfGame) => {
+socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTable) => {
     console.log("Client game over, showing table with results");
-    showTableResults(player_points, player_overall_points);
+    showTableResults(player_points, player_overall_points, showTable);
     if (endOfGame) {
         for (let key in player_overall_points) {
             if (player_overall_points[key].playerPoints > 100) {
@@ -441,13 +441,15 @@ function showOverallTable(playerNames) {
     }
 }
 
-function showTableResults(player_points, player_overall_points) {
+function showTableResults(player_points, player_overall_points, showTable) {
     toggleElements("none", "block", "block", "none", "none");
     let row = 1;
-    for (let key in player_points) {
-        resultTable.rows[row].cells[0].innerHTML = player_points[key].playerName;
-        resultTable.rows[row].cells[1].innerHTML = player_points[key].playerPoints;
-        row++;
+    if (showTable) {
+        for (let key in player_points) {
+            resultTable.rows[row].cells[0].innerHTML = player_points[key].playerName;
+            resultTable.rows[row].cells[1].innerHTML = player_points[key].playerPoints;
+            row++;
+        }
     }
 
     row = 1;
