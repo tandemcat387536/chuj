@@ -2,16 +2,20 @@
 // SERVER CFG
 const express = require('express');
 const app = express();
-const server = app.listen(3000);
-const io = require('socket.io')(server);
-const Datastore = require('nedb');
 app.use(express.static('public'));
+const http = require('http').Server(app);
+//const server = app.listen(3000);
+const io = require('socket.io')(http);
+const Datastore = require('nedb');
+http.listen(3000, () => {
+   console.log('listening on :3000');
+});
 /*
 app.get('/', (req, res) => {
     res.send("Hello world|")
 });
 */
-//console.log("My socket server is running");
+console.log("My socket server is running");
 
 const users = new Datastore('users.db');
 users.loadDatabase();

@@ -5,6 +5,7 @@
     "jquerry": "^2.0.0",
     "mysql": "^2.18.1",
     "nedb": "^1.8.0",
+    "require": "^2.4.20",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0"
   },
