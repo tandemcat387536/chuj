@@ -24,7 +24,6 @@ class Player {
         this._cards = [];
         this._points = 0;
         this._onTurn = false;
-        this._playingIndex = -1;
     }
 
     get playingIndex() {
@@ -315,9 +314,9 @@ socket.on('newPlayer', (otherPlayerName) => {
 socket.on('startingGame', (cards, index, playerNames) => {
     welcomeMsg.style.display = "none";
     player.id = socket.id;
-    //if (player.playingIndex === -1) {
-    player.playingIndex = index;
-    //}
+    if (player.playingIndex === -1) {
+        player.playingIndex = index;
+    }
     showOverallTable(playerNames);
     showNames(playerNames);
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
