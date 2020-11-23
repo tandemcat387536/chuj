@@ -86,6 +86,14 @@ io.sockets.on('connection', (socket) => {
         }
     });
 
+    socket.on('myTurn', () => {
+        for (let key in playerNames) {
+            if (player_overall_points[socket.id].playerName === playerNames[key]) {
+                io.emit('IndexOfPlayerOnTurn', key);
+            }
+        }
+    });
+
     socket.on('flushDeck', () => {
         socket.broadcast.emit('flushDeck');
     });
@@ -193,6 +201,7 @@ io.sockets.on('connection', (socket) => {
 
     function storePoints(data) {
         player_points[data.playerID] = {playerName: data.playerName, playerPoints: data.playerPoints};
+        console.log(player_overall_points);
         player_overall_points[data.playerID].playerPoints = player_overall_points[data.playerID].playerPoints + data.playerPoints;
 
         let twenty = false;

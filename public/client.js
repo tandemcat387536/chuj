@@ -196,6 +196,7 @@ function cmpSuits(first, second) {
 let player = new Player();
 let players = [];
 let deck = new Deck();
+let playerOnTurn = -1;
 
 const msg = document.getElementById('msgText');
 const resultTable = document.getElementById('resultTable');
@@ -281,10 +282,25 @@ function playableCards() {
 }
 
 function removeCardFromOtherPlayer(otherIndex) {
-    //console.log("otherIndex : " + otherIndex + "playerIndex : " + player.playingIndex);
     const nodeCard = document.getElementById((4 + (otherIndex - player.playingIndex)) % 4);
     if (nodeCard.firstChild) {
         nodeCard.removeChild(nodeCard.lastChild);
+    }
+    switch ((4 + (otherIndex - player.playingIndex)) % 4) {
+        case 0:
+            myName.classList.remove('playerOnTurn');
+            break;
+        case 1:
+            playerRight.classList.remove('playerOnTurn');
+            break;
+        case 2:
+            playerUp.classList.remove('playerOnTurn');
+            break;
+        case 3:
+            playerLeft.classList.remove('playerOnTurn');
+            break;
+        default:
+            break;
     }
 }
 
@@ -299,9 +315,9 @@ socket.on('newPlayer', (otherPlayerName) => {
 socket.on('startingGame', (cards, index, playerNames) => {
     welcomeMsg.style.display = "none";
     player.id = socket.id;
-    if (player.playingIndex === -1) {
-        player.playingIndex = index;
-    }
+    //if (player.playingIndex === -1) {
+    player.playingIndex = index;
+    //}
     showOverallTable(playerNames);
     showNames(playerNames);
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
@@ -330,6 +346,7 @@ socket.on('flushDeck', () => {
 
 
 socket.on('yourTurn', () => {
+    socket.emit('myTurn');
     toggleElements("none", "none", "none", "none", "block", "block");
     player.onTurn = true;
     console.log(player.name + "on turn");
@@ -399,6 +416,25 @@ socket.on('choosePoints', () => {
     document.getElementById('choosePoints').style.display = "block";
 });
 
+socket.on('IndexOfPlayerOnTurn', (index) => {
+    switch ((4 + (index - player.playingIndex)) % 4) {
+        case 0:
+            myName.classList.add('playerOnTurn');
+            break;
+        case 1:
+            playerRight.classList.add('playerOnTurn');
+            break;
+        case 2:
+            playerUp.classList.add('playerOnTurn');
+            break;
+        case 3:
+            playerLeft.classList.add('playerOnTurn');
+            break;
+        default:
+            break;
+    }
+});
+
 function subtractPoints(e) {
     e.preventDefault();
     socket.emit('subtract');
@@ -424,6 +460,7 @@ function takingDeck() {
     flushDeck();
     socket.emit('flushDeck');
     if (player.cards.length !== 0) {
+        socket.emit('myTurn');
         player.onTurn = true;
         playableCards();
         toggleElements("none", "none", "none", "none", "block", "block");
@@ -447,14 +484,17 @@ function showOverallTable(playerNames) {
 }
 
 function showTableResults(player_points, player_overall_points, showTable) {
-    toggleElements("none", "block", "block", "none", "none", "none");
+    toggleElements("none", "none", "block", "none", "none", "none");
     let row = 1;
     if (showTable) {
+        resultTable.style.display = "block";
         for (let key in player_points) {
             resultTable.rows[row].cells[0].innerHTML = player_points[key].playerName;
             resultTable.rows[row].cells[1].innerHTML = player_points[key].playerPoints;
             row++;
         }
+    } else {
+
     }
 
     row = 1;
@@ -537,6 +577,7 @@ function drop(event) {
                     player.cards.splice(card, 1);
                     socket.emit('moveDone', data);
                     player.onTurn = false;
+                    myName.classList.remove('playerOnTurn');
                     toggleElements("none", "none", "none", "none", "none", "block");
                     checkDeck();
                 }
