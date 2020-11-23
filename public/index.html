@@ -20,6 +20,12 @@
 
     <button type="button" class="button ready rounded lightGreen" id="ready"> Ready </button>
 
+    <div class="choosePoints" id="choosePoints">
+        <h2 class="choosingMsg"> Vyborne chuju, nahral si 20 bodov, co teraz? </h2>
+        <button type="button" class="button subtractPoints lightGreen" onclick="subtractPoints(event)">Odpocitat body (-20)</button>
+        <button type="button" class="button addPoints lightRed" onclick="addPoints(event)">Ostatnym pripisat body (+20)</button>
+    </div>
+
     <table id="resultTable" class="resultTable">
         <tbody>
             <tr>
@@ -69,6 +75,12 @@
             </tr>
         </tbody>
     </table>
+
+    <a href="index.html" id="newGame" class="newGame"> Nova hra </a>
+
+    <div class="endOfGame" id="endOfGame">
+        <h2 id="endOfGameMsg"></h2>
+    </div>
 
     <h2 class="yourTurn" id="yourTurn"> Ides chuju! </h2>
 
