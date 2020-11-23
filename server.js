@@ -49,7 +49,7 @@ function shuffle(array) {
 let actualPlayer;
 let nextBeginningPlayerID = null;
 let players = [];
-let playerNames = [];
+let playerNames = {};
 let cards = generateCards();
 let player_points = {};
 let player_overall_points = {};
@@ -64,12 +64,14 @@ io.sockets.on('connection', (socket) => {
         if (players.length < 4) {
             players.push(socket.id);
             player_overall_points[socket.id] = {playerName: player_name, playerPoints: 0};
+            playerNames[players.length - 1] = player_overall_points[socket.id].playerName;
             if (players.length === 4) {
                 console.log("4 players connected");
                 actualPlayer = 0;
+                /*
                 for (let key in player_overall_points) {
-                    playerNames.push(player_overall_points[key].playerName);
-                }
+                    //playerNames.push(player_overall_points[key].playerName);
+                }*/
 
                 for (let i = 0; i < 4; i++) {
                     io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i, playerNames);
@@ -165,20 +167,27 @@ io.sockets.on('connection', (socket) => {
 
     function playerWhoPlayedDisconnects(playerIndex) {
         console.log("player disconnected : " + players[playerIndex]);
-        let nameIndex = playerNames.indexOf(player_overall_points[players[playerIndex]].playerName);
+        //let nameIndex = playerNames.indexOf(player_overall_points[players[playerIndex]].playerName);
         for (let key in player_points) {
-            delete player_points.key;
+            delete player_points[key];  //player_points.key
+        }
+
+        let disconnecting;
+        for (let key in playerNames) {
+             if (playerNames[key] === player_overall_points[players[playerIndex]].playerName) {
+                disconnecting = key;
+            }
         }
 
         delete player_overall_points[players[playerIndex]];
-
         io.emit('cancellingGame');
         actualPlayer = 0;
         nextBeginningPlayerID = null;
         cards = generateCards();
         shuffle(cards);
         readyPlayers = 0;
-        playerNames.splice(nameIndex, 1);
+        //playerNames.splice(nameIndex, 1);
+        delete playerNames[disconnecting];
         players.splice(playerIndex, 1);
     }
 

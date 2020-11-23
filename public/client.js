@@ -206,6 +206,10 @@ const yourTurn = document.getElementById('yourTurn');
 const nameButton = document.getElementById('nameButton');
 const name = document.getElementById('name');
 const nameLabel = document.getElementById('nameLabel');
+const playerLeft = document.getElementById('playerLeft');
+const playerRight = document.getElementById('playerRight');
+const playerUp = document.getElementById('playerUp');
+const myName = document.getElementById('myName');
 let welcomeMsg = document.createElement("h2");
 
 function playerName(e) {
@@ -299,6 +303,7 @@ socket.on('startingGame', (cards, index, playerNames) => {
         player.playingIndex = index;
     }
     showOverallTable(playerNames);
+    showNames(playerNames);
     //console.log("Playing index of" + player.id +" is " + player.playingIndex);
     for (let i = 0; i < 8; i++) {
         let card = new Card(cards[i].suit, cards[i].value);
@@ -311,7 +316,7 @@ socket.on('startingGame', (cards, index, playerNames) => {
         player.addCard(card);
         img = new Image();
     }
-    toggleElements("none", "none", "none", "none", "none");
+    toggleElements("none", "none", "none", "none", "none", "block");
     //name.style.display = "none";
     document.getElementById('nameLabel').style.display = "none";
     showCardsOfOtherPlayers();
@@ -325,7 +330,7 @@ socket.on('flushDeck', () => {
 
 
 socket.on('yourTurn', () => {
-    toggleElements("none", "none", "none", "none", "block");
+    toggleElements("none", "none", "none", "none", "block", "block");
     player.onTurn = true;
     console.log(player.name + "on turn");
     playableCards();
@@ -354,7 +359,7 @@ socket.on('newCardPlayed', (cardInfo) => {
 
 socket.on('takeDeck', () => {
     player.takeCards(deck.points);
-    toggleElements("none", "none","none", "block", "none");
+    toggleElements("none", "none","none", "block", "none", "block");
     takeButton.addEventListener("click", takingDeck);
 });
 
@@ -369,7 +374,7 @@ socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTabl
             }
         }
         document.getElementById('newGame').style.display = "block";
-        toggleElements("none", "block", "none", "none", "none");
+        toggleElements("none", "block", "none", "none", "none", "none");
     } else {
         readyButton.addEventListener("click", playerReady);
     }
@@ -387,7 +392,7 @@ socket.on('cancellingGame', () => {
     }
     flushDeck();
     overallTable.style.display = "none";
-    toggleElements("block", "none","none", "none", "none");
+    toggleElements("block", "none","none", "none", "none", "none");
 });
 
 socket.on('choosePoints', () => {
@@ -421,10 +426,10 @@ function takingDeck() {
     if (player.cards.length !== 0) {
         player.onTurn = true;
         playableCards();
-        toggleElements("none", "none", "none", "none", "block");
+        toggleElements("none", "none", "none", "none", "block", "block");
     } else {
         console.log("Player has 0 cards, end game");
-        toggleElements("none", "none", "none", "none", "none");
+        toggleElements("none", "none", "none", "none", "none", "none");
         socket.emit('endGame');
     }
 }
@@ -433,8 +438,8 @@ function showOverallTable(playerNames) {
     if (overallTable.style.display !== "block"){
             overallTable.style.display = "block";
         let row = 1;
-        for (let name of playerNames) {
-            overallTable.rows[row].cells[0].innerHTML = name;
+        for (let key in playerNames) {
+            overallTable.rows[row].cells[0].innerHTML = playerNames[key];
             overallTable.rows[row].cells[1].innerHTML = "0";
             row++;
         }
@@ -442,7 +447,7 @@ function showOverallTable(playerNames) {
 }
 
 function showTableResults(player_points, player_overall_points, showTable) {
-    toggleElements("none", "block", "block", "none", "none");
+    toggleElements("none", "block", "block", "none", "none", "none");
     let row = 1;
     if (showTable) {
         for (let key in player_points) {
@@ -460,12 +465,43 @@ function showTableResults(player_points, player_overall_points, showTable) {
     }
 }
 
-function toggleElements(msgE, resultTableE, readyButtonE, takeButtonE, yourTurnE) {
+function showNames(playerNames) {
+    for (let key in playerNames) {
+        console.log("Key : " + key + " playerIndex : " + player.playingIndex);
+        console.log((4 + (key - player.playingIndex)) % 4);
+        switch ((4 + (key - player.playingIndex)) % 4) {
+            case 0:
+                myName.innerHTML = playerNames[key];
+                myName.style.display = "block";
+                break;
+            case 1:
+                playerRight.innerHTML = playerNames[key];
+                playerRight.style.display = "block";
+                break;
+            case 2:
+                playerUp.innerHTML = playerNames[key];
+                playerUp.style.display = "block";
+                break;
+            case 3:
+                playerLeft.innerHTML = playerNames[key];
+                playerLeft.style.display = "block";
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+function toggleElements(msgE, resultTableE, readyButtonE, takeButtonE, yourTurnE, nameE) {
     msg.style.display = msgE;
     resultTable.style.display = resultTableE;
     readyButton.style.display = readyButtonE;
     takeButton.style.display = takeButtonE;
     yourTurn.style.display = yourTurnE;
+    playerLeft.style.display = nameE;
+    playerRight.style.display = nameE;
+    playerUp.style.display = nameE;
+    myName.style.display = nameE;
 }
 
 function allowDrop(event) {
@@ -501,7 +537,7 @@ function drop(event) {
                     player.cards.splice(card, 1);
                     socket.emit('moveDone', data);
                     player.onTurn = false;
-                    toggleElements("none", "none", "none", "none", "none", "none");
+                    toggleElements("none", "none", "none", "none", "none", "block");
                     checkDeck();
                 }
             }
