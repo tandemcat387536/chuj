@@ -1,4 +1,4 @@
-const socket = io.connect('http://89.103.119.17:3000'); // connect to server
+const socket = io.connect('http://http://:3000'); // connect to server
 
 // CLASSES
 class Player {
@@ -331,7 +331,6 @@ socket.on('startingGame', (cards, index, playerNames) => {
         player.addCard(card);
         img = new Image();
     }
-    document.getElementById('endOfGameMsg').style.display = "none";
     toggleElements("none", "none", "none", "none", "none", "block");
     //name.style.display = "none";
     document.getElementById('nameLabel').style.display = "none";
@@ -388,7 +387,6 @@ socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTabl
             if (player_overall_points[key].playerPoints > 100) {
                 document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju, hrac "
                     + player_overall_points[key].playerName + " prehral, no to je chuj.";
-                document.getElementById('endOfGameMsg').style.display = "block";
             }
         }
         document.getElementById('newGame').style.display = "block";
@@ -579,10 +577,6 @@ function drop(event) {
                     socket.emit('moveDone', data);
                     player.onTurn = false;
                     myName.classList.remove('playerOnTurn');
-		    for (let card of player.cards) {
-                        card.playable = true;
-                        card.image.classList.replace('imgNotPlayable', 'imgHand');
-                    }
                     toggleElements("none", "none", "none", "none", "none", "block");
                     checkDeck();
                 }

@@ -388,8 +388,8 @@ socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTabl
             if (player_overall_points[key].playerPoints > 100) {
                 document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju, hrac "
                     + player_overall_points[key].playerName + " prehral, no to je chuj.";
-                document.getElementById('endOfGameMsg').style.display = "block";
             }
+
         }
         document.getElementById('newGame').style.display = "block";
         toggleElements("none", "block", "none", "none", "none", "none");

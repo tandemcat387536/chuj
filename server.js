@@ -3,18 +3,11 @@
 const express = require('express');
 const app = express();
 app.use(express.static('public'));
-const http = require('http').Server(app);
-//const server = app.listen(3000);
-const io = require('socket.io')(http);
+//const http = require('http').Server(app);
+const server = app.listen(3000);
+const io = require('socket.io')(server);
 const Datastore = require('nedb');
-http.listen(3000, () => {
-   console.log('listening on :3000');
-});
-/*
-app.get('/', (req, res) => {
-    res.send("Hello world|")
-});
-*/
+
 console.log("My socket server is running");
 
 const users = new Datastore('users.db');
@@ -63,7 +56,7 @@ let readyPlayers = 0;
 io.sockets.on('connection', (socket) => {
 
     socket.on('playerCreated', (player_name) => {
-        //console.log('new player created: ' + socket.id);
+        console.log('new player created: ' + socket.id);
 
         if (players.length < 4) {
             players.push(socket.id);
@@ -86,7 +79,7 @@ io.sockets.on('connection', (socket) => {
                 //console.log("Player is on turn : " + players[0]);
             }
         } else {
-            //console.log("Full capacity, gtfo");
+            console.log("Full capacity, gtfo : " + socket.id);
         }
     });
 
@@ -170,7 +163,7 @@ io.sockets.on('connection', (socket) => {
                 if (player_overall_points[key].playerPoints < 0) {
                     player_overall_points[key].playerPoints = 0;
                 }
-            } else if (player_overall_points[key].playerPoints > 100) {
+            } else if (player_overall_points[key].playerPoints > 10) {
                 return true;
             }
         }
