@@ -433,7 +433,7 @@ tr:last-of-type td:last-child {
 
 .endOfGame {
     position: absolute;
-    left: 20%;
+    left: 30%;
     font-size: 25px;
     display: none;
 }

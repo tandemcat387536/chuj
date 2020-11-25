@@ -1,4 +1,5 @@
-const socket = io.connect('http://89.103.119.17:3000'); // connect to server
+//const socket = io.connect('http://89.103.119.17:3000'); // connect to server
+const socket = io.connect('http://localhost:3000'); // connect to server
 
 // CLASSES
 class Player {
@@ -384,12 +385,12 @@ socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTabl
     //console.log("Client game over, showing table with results");
     showTableResults(player_points, player_overall_points, showTable);
     if (endOfGame) {
-        for (let key in player_overall_points) {
-            if (player_overall_points[key].playerPoints > 100) {
-                document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju, hrac "
-                    + player_overall_points[key].playerName + " prehral, no to je chuj.";
-                document.getElementById('endOfGameMsg').style.display = "block";
-            }
+        document.getElementById('endOfGame').style.display = "block";
+        document.getElementById('endOfGameMsg').style.display = "block";
+        if (player_overall_points[player.id].playerPoints > 10) {
+            document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju " + player_overall_points[player.id].playerName + ", prehral si, no ty si chuj";
+        } else {
+            document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju " + player_overall_points[player.id].playerName + ", vacsi chuj jak ty prehral";
         }
         document.getElementById('newGame').style.display = "block";
         toggleElements("none", "block", "none", "none", "none", "none");
