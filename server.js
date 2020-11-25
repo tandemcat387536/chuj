@@ -63,12 +63,8 @@ io.sockets.on('connection', (socket) => {
             player_overall_points[socket.id] = {playerName: player_name, playerPoints: 0};
             playerNames[players.length - 1] = player_overall_points[socket.id].playerName;
             if (players.length === 4) {
-                //console.log("4 players connected");
+                console.log("4 players connected");
                 actualPlayer = 0;
-                /*
-                for (let key in player_overall_points) {
-                    //playerNames.push(player_overall_points[key].playerName);
-                }*/
 
                 for (let i = 0; i < 4; i++) {
                     io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i, playerNames);
@@ -76,7 +72,7 @@ io.sockets.on('connection', (socket) => {
 
                 nextBeginningPlayerID = players[1];
                 io.to(players[0]).emit('yourTurn');
-                //console.log("Player is on turn : " + players[0]);
+                console.log("Player is on turn : " + players[0]);
             }
         } else {
             console.log("Full capacity, gtfo : " + socket.id);
@@ -101,23 +97,23 @@ io.sockets.on('connection', (socket) => {
         actualPlayer++;
         if (actualPlayer < 4) {
             io.to(players[actualPlayer]).emit('yourTurn');
-            //console.log("Player is on turn : " + players[actualPlayer]);
+            console.log("Player is on turn : " + players[actualPlayer]);
         }
     });
 
     socket.on('fullDeck', (beginningPlayerID) => {
-        //console.log("beginningPlayerID : " + beginningPlayerID);
+        console.log("beginningPlayerID : " + beginningPlayerID);
         io.to(beginningPlayerID).emit('takeDeck');
         updateOrderOfPlayers(players, beginningPlayerID);
     });
 
     socket.on('endGame', () => {
-       //console.log("game over, " + socket.id + " everybody send points");
+       console.log("game over, " + socket.id + " everybody send points");
        io.emit("sendPoints");
     });
 
     socket.on('sendingPoints', function (data) {
-        //console.log(data.playerName + " is sending points");
+        console.log(data.playerName + " is sending points");
         storePoints(data);
     });
 
@@ -163,16 +159,15 @@ io.sockets.on('connection', (socket) => {
                 if (player_overall_points[key].playerPoints < 0) {
                     player_overall_points[key].playerPoints = 0;
                 }
-            } else if (player_overall_points[key].playerPoints > 10) {
-                return true;
+            } else if (player_overall_points[key].playerPoints > 100) {
+                return key;
             }
         }
         return false;
     }
 
     function playerWhoPlayedDisconnects(playerIndex) {
-        //console.log("player disconnected : " + players[playerIndex]);
-        //let nameIndex = playerNames.indexOf(player_overall_points[players[playerIndex]].playerName);
+        console.log("player disconnected : " + players[playerIndex]);
         for (let key in player_points) {
             delete player_points[key];  //player_points.key
         }
@@ -191,23 +186,22 @@ io.sockets.on('connection', (socket) => {
         cards = generateCards();
         shuffle(cards);
         readyPlayers = 0;
-        //playerNames.splice(nameIndex, 1);
         delete playerNames[disconnecting];
         players.splice(playerIndex, 1);
     }
 
     function storePoints(data) {
         player_points[data.playerID] = {playerName: data.playerName, playerPoints: data.playerPoints};
-        //console.log(player_overall_points);
+        console.log(player_overall_points);
         player_overall_points[data.playerID].playerPoints = player_overall_points[data.playerID].playerPoints + data.playerPoints;
 
         let twenty = false;
-        //console.log(player_points);
+        console.log(player_points);
         if (Object.keys(player_points).length === 4) {
             points_database.insert(player_points);
             for (let key in player_points) {
 
-                //console.log("Player : " + key + " points : " + player_points[key].playerPoints);
+                console.log("Player : " + key + " points : " + player_points[key].playerPoints);
                 if (player_points[key].playerPoints === 20) {
                     io.to(key).emit('choosePoints');
                     twenty = true;
@@ -215,7 +209,11 @@ io.sockets.on('connection', (socket) => {
             }
             if (!twenty) {
                 let lost = checkPoints();
-                io.emit('gameOver', player_points, player_overall_points, lost, true);
+                if (lost === false) {
+                    io.emit('gameOver', player_points, player_overall_points, lost, true);
+                } else {
+                    io.emit('gameOver', player_points, player_overall_points, player_overall_points[lost].playerName, true);
+                }
             }
 
             for (let key in player_points) {
@@ -246,7 +244,7 @@ io.sockets.on('connection', (socket) => {
             io.to(players[i]).emit('startingGame', cards.slice(i * 8, i * 8 + 8), i, playerNames);
         }
         io.to(players[actualPlayer]).emit('yourTurn');
-        //console.log("Player is on turn : " + players[actualPlayer]);
+        console.log("Player is on turn : " + players[actualPlayer]);
     }
 });
 

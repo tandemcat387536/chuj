@@ -1,5 +1,4 @@
-//const socket = io.connect('http://89.103.119.17:3000'); // connect to server
-const socket = io.connect('http://localhost:3000'); // connect to server
+const socket = io.connect('http://89.103.119.17:3000'); // connect to server
 
 // CLASSES
 class Player {
@@ -333,6 +332,8 @@ socket.on('startingGame', (cards, index, playerNames) => {
         img = new Image();
     }
     document.getElementById('endOfGameMsg').style.display = "none";
+    overallTable.classList.replace( 'endGameTable', 'overallTable');
+    resultTable.classList.replace('endGameResultTable', 'resultTable');
     toggleElements("none", "none", "none", "none", "none", "block");
     //name.style.display = "none";
     document.getElementById('nameLabel').style.display = "none";
@@ -384,15 +385,16 @@ socket.on('takeDeck', () => {
 socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTable) => {
     //console.log("Client game over, showing table with results");
     showTableResults(player_points, player_overall_points, showTable);
-    if (endOfGame) {
+    if (endOfGame !== false) {
         document.getElementById('endOfGame').style.display = "block";
         document.getElementById('endOfGameMsg').style.display = "block";
-        if (player_overall_points[player.id].playerPoints > 10) {
+        overallTable.classList.replace('overallTable', 'endGameTable');
+        resultTable.classList.replace('resultTable', 'endGameResultTable');
+        if (player_overall_points[player.id].playerPoints > 100) {
             document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju " + player_overall_points[player.id].playerName + ", prehral si, no ty si chuj";
         } else {
-            document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju " + player_overall_points[player.id].playerName + ", vacsi chuj jak ty prehral";
+            document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju " + player_overall_points[player.id].playerName + ", chuj " + endOfGame + " prehral, no to je chuj";
         }
-        document.getElementById('newGame').style.display = "block";
         toggleElements("none", "block", "none", "none", "none", "none");
     } else {
         readyButton.addEventListener("click", playerReady);
@@ -505,6 +507,7 @@ function showTableResults(player_points, player_overall_points, showTable) {
         overallTable.rows[row].cells[1].innerHTML = player_overall_points[key].playerPoints;
         row++;
     }
+    //overallTable.style.display = "block";
 }
 
 function showNames(playerNames) {
