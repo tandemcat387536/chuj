@@ -125,7 +125,7 @@ io.sockets.on('connection', (socket) => {
     });
 
     socket.on('subtract', () => {
-        player_overall_points[socket.id].playerPoints -= 20;
+        player_overall_points[socket.id].playerPoints -= 40;
         if (player_overall_points[socket.id].playerPoints < 0) {
             player_overall_points[socket.id].playerPoints = 0;
         }
