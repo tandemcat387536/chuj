@@ -210,6 +210,7 @@ const playerLeft = document.getElementById('playerLeft');
 const playerRight = document.getElementById('playerRight');
 const playerUp = document.getElementById('playerUp');
 const myName = document.getElementById('myName');
+const newGameButton = document.getElementById('newGame');
 let welcomeMsg = document.createElement("h2");
 
 function playerName(e) {
@@ -396,6 +397,8 @@ socket.on('gameOver', (player_points, player_overall_points, endOfGame, showTabl
             document.getElementById('endOfGameMsg').innerHTML = "Koniec hry chuju " + player_overall_points[player.id].playerName + ", chuj " + endOfGame + " prehral, no to je chuj";
         }
         toggleElements("none", "block", "none", "none", "none", "none");
+        newGameButton.style.display = "block";
+        newGameButton.addEventListener("click", newGame)
     } else {
         readyButton.addEventListener("click", playerReady);
     }
@@ -535,6 +538,11 @@ function showNames(playerNames) {
                 break;
         }
     }
+}
+
+function newGame() {
+    socket.emit('newGame');
+    newGameButton.style.display = "none";
 }
 
 function toggleElements(msgE, resultTableE, readyButtonE, takeButtonE, yourTurnE, nameE) {

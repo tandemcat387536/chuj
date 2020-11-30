@@ -469,6 +469,9 @@ tr:last-of-type td:last-child {
 }
 
 .newGame {
+    position: absolute;
+    left: 20%;
+    top: 30%;
     display: none;
 }
 

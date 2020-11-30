@@ -52,6 +52,7 @@ let player_points = {};
 let player_overall_points = {};
 shuffle(cards);
 let readyPlayers = 0;
+let newGamePlayers = 0;
 
 io.sockets.on('connection', (socket) => {
 
@@ -142,6 +143,20 @@ io.sockets.on('connection', (socket) => {
         }
         let lost = checkPoints();
         io.emit('gameOver', player_points, player_overall_points, lost, false);
+    });
+
+    socket.on('newGame', () => {
+        newGamePlayers++;
+        if (newGamePlayers === 4) {
+            for (let key in player_overall_points) {
+                delete player_overall_points[key];
+            }
+
+            for (let key in player_points) {
+                delete player_points[key];
+            }
+            newGame();
+        }
     });
 
     socket.on('disconnect', () => {
