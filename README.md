@@ -5,7 +5,8 @@ Since I really wanted to play this game and I didn't know when could I return, I
 - javascript,
 - html,
 - css,
-- client/server logic.
+- client/server logic via socket.io
+- node.js
 
 At the moment, the game does not work since the game server is offline.
 
